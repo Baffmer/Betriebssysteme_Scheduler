@@ -19,6 +19,11 @@ set(PROJECT_SOURCES
         mainwindow.ui
         process.h
         process.cpp
+        dialogprozesserstellen.cpp
+        dialogprozesserstellen.h
+        dialogprozesserstellen.ui
+        processtable.h
+        processtable.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

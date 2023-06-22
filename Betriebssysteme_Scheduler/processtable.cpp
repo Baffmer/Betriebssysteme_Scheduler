@@ -8,21 +8,38 @@ ProcessTable::ProcessTable()
 void ProcessTable::addProcess(Process process)
 {
     m_processList.push_back(process);
+
+    emitProcessTableUpdate();
 }
 
 void ProcessTable::removeProcess(Process process)
 {
-    //m_lagerList.removeAt(m_lagerList.indexOf(item));
+    //m_processList.removeAt(m_processList.indexOf(process));
+
+    //emitProcessTableUpdate();
 }
 
 void ProcessTable::removeProcessAt(qint64 pos)
 {
     m_processList.removeAt(pos);
+
+    emitProcessTableUpdate();
 }
 
 void ProcessTable::removeAllProcesses()
 {
     m_processList.clear();
+
+    emitProcessTableUpdate();
+}
+
+Process ProcessTable::getProcessByPID(qint64 PID)
+{
+    for (Process &process : m_processList) {
+        if(process.PID() == PID){
+            return process;
+        }
+    }
 }
 
 qint64 ProcessTable::sizeProcessList()
@@ -38,13 +55,23 @@ ProcessTable *ProcessTable::instance()
 
 void ProcessTable::printAllProcesses()
 {
-    for(Process &item : m_processList){
-        qDebug() << "PID:" << item.PID()
-                 << "Zustand:" << item.zustand()
-                 << "Priorisierung:" << item.priorisierung()
-                 << "ProzessorRegister:" << item.prozessorRegister()
-            << "Hauptspeicher:" << item.hauptspeicher()
-            << "AnzahlEinAusgabe:" << item.anzahlEinAusgabe()
-            << "DauerThreads:" << item.dauerThreads();
+    for(Process &process : m_processList){
+        qDebug() << "PID:" << process.PID()
+                 << "Zustand:" << process.zustand()
+                 << "Priorisierung:" << process.priorisierung()
+                 << "ProzessorRegister:" << process.prozessorRegister()
+            << "Hauptspeicher:" << process.hauptspeicher()
+            << "AnzahlEinAusgabe:" << process.anzahlEinAusgabe()
+            << "DauerThreads:" << process.dauerThreads();
     }
+}
+
+void ProcessTable::emitProcessTableUpdate()
+{
+    emit processListChanged();
+}
+
+QList<Process> ProcessTable::processList() const
+{
+    return m_processList;
 }

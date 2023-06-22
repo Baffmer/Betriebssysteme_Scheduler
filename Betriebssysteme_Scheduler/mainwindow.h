@@ -20,6 +20,8 @@ public:
 
 private slots:
     void on_pushButtonProzessErstellen_clicked();
+    void updateProcessTable();
+    void updateProcessInformationTable();
 
 private:
     Ui::MainWindow *ui;

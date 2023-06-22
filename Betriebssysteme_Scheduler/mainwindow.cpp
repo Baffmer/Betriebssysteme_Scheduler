@@ -38,7 +38,11 @@ void MainWindow::updateProcessTable()
     ui->tableWidgetProzesstabelle->setRowCount(ProcessTable::instance()->sizeProcessList());
 
     for(Process &process : ProcessTable::instance()->processList()){
-        ui->tableWidgetProzesstabelle->setItem(row, 0, new QTableWidgetItem(QString::number(process.PID()), 0));
+
+        QTableWidgetItem* processItem = new QTableWidgetItem(QString::number(process.PID()), 0);
+        processItem->setTextAlignment(Qt::AlignCenter);
+
+        ui->tableWidgetProzesstabelle->setItem(row, 0, processItem);
 
         QString zustand;
 
@@ -56,8 +60,15 @@ void MainWindow::updateProcessTable()
             break;
         }
 
-        ui->tableWidgetProzesstabelle->setItem(row, 1, new QTableWidgetItem(zustand, 0));
-        ui->tableWidgetProzesstabelle->setItem(row++, 2, new QTableWidgetItem(QString::number(process.priorisierung()), 0));
+        QTableWidgetItem* zustandItem = new QTableWidgetItem(QString::number(process.zustand()), 0);
+        zustandItem->setTextAlignment(Qt::AlignCenter);
+
+        ui->tableWidgetProzesstabelle->setItem(row, 1, zustandItem);
+
+        QTableWidgetItem* priorisierungItem = new QTableWidgetItem(QString::number(process.priorisierung()), 0);
+        priorisierungItem->setTextAlignment(Qt::AlignCenter);
+
+        ui->tableWidgetProzesstabelle->setItem(row++, 2, priorisierungItem);
     }
 }
 
@@ -77,10 +88,29 @@ void MainWindow::updateProcessInformationTable()
 
     ui->tableWidgetProzessinformationen->clearContents();
 
-    ui->tableWidgetProzessinformationen->setItem(0, 0, new QTableWidgetItem(QString::number(process.prozessorRegister()), 0));
-    ui->tableWidgetProzessinformationen->setItem(0, 1, new QTableWidgetItem(QString::number(process.hauptspeicher()), 0));
-    ui->tableWidgetProzessinformationen->setItem(0, 2, new QTableWidgetItem(QString::number(process.anzahlEinAusgabe()), 0));
-    ui->tableWidgetProzessinformationen->setItem(0, 3, new QTableWidgetItem(QString::number(process.anzahlThreads()), 0));
-    ui->tableWidgetProzessinformationen->setItem(0, 4, new QTableWidgetItem(QString::number(process.dauerThreads()), 0));
+    QTableWidgetItem* prozessorRegisterItem = new QTableWidgetItem(QString::number(process.prozessorRegister()), 0);
+    prozessorRegisterItem->setTextAlignment(Qt::AlignCenter);
+
+    ui->tableWidgetProzessinformationen->setItem(0, 0, prozessorRegisterItem);
+
+    QTableWidgetItem* hauptspeicherItem = new QTableWidgetItem(QString::number(process.hauptspeicher()), 0);
+    hauptspeicherItem->setTextAlignment(Qt::AlignCenter);
+
+    ui->tableWidgetProzessinformationen->setItem(0, 1, hauptspeicherItem);
+
+    QTableWidgetItem* anzahlEinAusgabeItem = new QTableWidgetItem(QString::number(process.anzahlEinAusgabe()), 0);
+    anzahlEinAusgabeItem->setTextAlignment(Qt::AlignCenter);
+
+    ui->tableWidgetProzessinformationen->setItem(0, 2, anzahlEinAusgabeItem);
+
+    QTableWidgetItem* anzahlThreadsItem = new QTableWidgetItem(QString::number(process.anzahlThreads()), 0);
+    anzahlThreadsItem->setTextAlignment(Qt::AlignCenter);
+
+    ui->tableWidgetProzessinformationen->setItem(0, 3, anzahlThreadsItem);
+
+    QTableWidgetItem* dauerThreadsItem = new QTableWidgetItem(QString::number(process.dauerThreads()), 0);
+    dauerThreadsItem->setTextAlignment(Qt::AlignCenter);
+
+    ui->tableWidgetProzessinformationen->setItem(0, 4, dauerThreadsItem);
 }
 

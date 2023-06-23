@@ -17,17 +17,6 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::on_pushButtonProzessErstellen_clicked()
-{
-    DialogProzessErstellen prozessErstellen(this, ProcessTable::instance()->sizeProcessList());
-    //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
-    if(prozessErstellen.exec() == QDialog::Accepted){
-        ProcessTable::instance()->addProcess(Process(prozessErstellen.process()));
-    }
-
-    ProcessTable::instance()->printAllProcesses();
-}
-
 void MainWindow::updateProcessTable()
 {
     qDebug() << "updating Process Table";
@@ -76,6 +65,11 @@ void MainWindow::updateProcessInformationTable()
 {
     qDebug() << "updating Process Information Table";
 
+    //Buttons aktivieren
+    ui->pushButtonProzessAbbrechen->setEnabled(true);
+    ui->pushButtonProzessBearbeiten->setEnabled(true);
+    ui->pushButtonProzessLoeschen->setEnabled(true);
+
     qint64 selectedRow = ui->tableWidgetProzesstabelle->currentRow();
     //qDebug() << "current row: " << selectedRow;
 
@@ -112,5 +106,51 @@ void MainWindow::updateProcessInformationTable()
     dauerThreadsItem->setTextAlignment(Qt::AlignCenter);
 
     ui->tableWidgetProzessinformationen->setItem(0, 4, dauerThreadsItem);
+}
+
+void MainWindow::on_pushButtonProzessErstellen_clicked()
+{
+    DialogProzessErstellen prozessErstellen(this, ProcessTable::instance()->sizeProcessList());
+    //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
+    if(prozessErstellen.exec() == QDialog::Accepted){
+        ProcessTable::instance()->addProcess(Process(prozessErstellen.process()));
+    }
+
+    ProcessTable::instance()->printAllProcesses();
+}
+
+void MainWindow::on_pushButtonProzessBearbeiten_clicked()
+{
+    qDebug() << "Prozess bearbeiten Button geklickt";
+
+    qint64 selectedRow = ui->tableWidgetProzesstabelle->currentRow();
+    qint64 PID = ui->tableWidgetProzesstabelle->item(selectedRow, 0)->text().toULongLong();
+
+    Process process = ProcessTable::instance()->getProcessByPID(PID);
+
+    DialogProzessErstellen prozessErstellen(this, process);
+    //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
+    if(prozessErstellen.exec() == QDialog::Accepted){
+        ProcessTable::instance()->updateProcessByPID(PID, Process(prozessErstellen.process()));
+    }
+
+    ProcessTable::instance()->printAllProcesses();
+
+    //Buttons aktivieren
+    ui->pushButtonProzessAbbrechen->setEnabled(false);
+    ui->pushButtonProzessBearbeiten->setEnabled(false);
+    ui->pushButtonProzessLoeschen->setEnabled(false);
+}
+
+
+void MainWindow::on_pushButtonProzessLoeschen_clicked()
+{
+    qDebug() << "Prozess löschen Button geklickt";
+}
+
+
+void MainWindow::on_pushButtonProzessAbbrechen_clicked()
+{
+    qDebug() << "Prozess abbrechen Button geklickt";
 }
 

@@ -23,6 +23,12 @@ private slots:
     void updateProcessTable();
     void updateProcessInformationTable();
 
+    void on_pushButtonProzessBearbeiten_clicked();
+
+    void on_pushButtonProzessLoeschen_clicked();
+
+    void on_pushButtonProzessAbbrechen_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

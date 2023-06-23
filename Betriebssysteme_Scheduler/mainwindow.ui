@@ -103,6 +103,16 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="pushButtonProzessBearbeiten">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Prozess bearbeiten</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="pushButtonProzessLoeschen">
              <property name="enabled">
               <bool>false</bool>

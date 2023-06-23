@@ -14,9 +14,9 @@ class DialogProzessErstellen : public QDialog
 
 public:
     explicit DialogProzessErstellen(QWidget *parent = nullptr, qint64 PID = 0);
+    DialogProzessErstellen(QWidget *parent = nullptr, Process process = Process());
+
     ~DialogProzessErstellen();
-
-
 
     Process process() const;
 

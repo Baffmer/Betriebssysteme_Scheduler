@@ -8,6 +8,21 @@ DialogProzessErstellen::DialogProzessErstellen(QWidget *parent, qint64 PID) :
     ui->setupUi(this);
 }
 
+DialogProzessErstellen::DialogProzessErstellen(QWidget *parent, Process process):
+    QDialog(parent), m_process(process),
+    ui(new Ui::DialogProzessErstellen)
+{
+    ui->setupUi(this);
+
+    ui->spinBoxPriorisierung->setValue(process.priorisierung());
+    ui->lineEditProzessregister->setText(QString::number(process.prozessorRegister()));
+    ui->lineEditJHauptspeicher->setText(QString::number(process.hauptspeicher()));
+    ui->spinBoxAnzahlEinAusgaben->setValue(process.anzahlEinAusgabe());
+    ui->spinBoxAnzahlThreads->setValue(process.anzahlThreads());
+    ui->spinBoxDauerThreads->setValue(process.dauerThreads());
+    m_PID = process.PID();
+}
+
 DialogProzessErstellen::~DialogProzessErstellen()
 {
     delete ui;

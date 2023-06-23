@@ -26,6 +26,31 @@ void ProcessTable::removeProcessAt(qint64 pos)
     emitProcessTableUpdate();
 }
 
+void ProcessTable::addProcessAt(qint64 pos, Process process)
+{
+    m_processList.insert(pos, process);
+
+    emitProcessTableUpdate();
+}
+
+void ProcessTable::updateProcessAt(qint64 pos, Process process)
+{
+    m_processList.replace(pos, process);
+
+    emitProcessTableUpdate();
+}
+
+void ProcessTable::updateProcessByPID(qint64 PID, Process updatedProcess)
+{
+    for (Process &process : m_processList) {
+        if(process.PID() == PID){
+            process = updatedProcess;
+        }
+    }
+
+    emitProcessTableUpdate();
+}
+
 void ProcessTable::removeAllProcesses()
 {
     m_processList.clear();

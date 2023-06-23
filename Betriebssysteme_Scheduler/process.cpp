@@ -98,3 +98,4 @@ void Process::setPriorisierung(qint64 newPriorisierung)
 {
     m_priorisierung = newPriorisierung;
 }
+

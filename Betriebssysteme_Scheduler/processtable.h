@@ -16,6 +16,7 @@ public:
     void addProcess(Process process);
     void removeProcess(Process process);
     void removeProcessAt(qint64 pos);
+    void removeProcessByPID(qint64 PID);
     void addProcessAt(qint64 pos, Process process);
     void updateProcessAt(qint64 pos, Process process);
     void updateProcessByPID(qint64 PID, Process process);

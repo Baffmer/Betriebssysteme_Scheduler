@@ -15,13 +15,21 @@ void ProcessTable::addProcess(Process process)
 void ProcessTable::removeProcess(Process process)
 {
     //m_processList.removeAt(m_processList.indexOf(process));
+    m_processList.removeOne(process);
 
-    //emitProcessTableUpdate();
+    emitProcessTableUpdate();
 }
 
 void ProcessTable::removeProcessAt(qint64 pos)
 {
     m_processList.removeAt(pos);
+
+    emitProcessTableUpdate();
+}
+
+void ProcessTable::removeProcessByPID(qint64 PID)
+{
+    // TODO
 
     emitProcessTableUpdate();
 }

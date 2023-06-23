@@ -39,6 +39,11 @@ public:
     qint64 priorisierung() const;
     void setPriorisierung(qint64 newPriorisierung);
 
+    bool operator==(const Process& process) const {
+        return
+            m_PID == process.m_PID;
+    }
+
 private:
     qint64 m_PID;
     Zustand m_zustand;
@@ -48,7 +53,6 @@ private:
     qint64 m_hauptspeicher;
     qint64 m_anzahlEinAusgabe;
     qint64 m_anzahlThreads;
-    qint64 m_dauerThreads;
+    qint64 m_dauerThreads;  
 };
-
 #endif // PROCESS_H

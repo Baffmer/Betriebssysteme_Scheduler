@@ -146,6 +146,13 @@ void MainWindow::on_pushButtonProzessBearbeiten_clicked()
 void MainWindow::on_pushButtonProzessLoeschen_clicked()
 {
     qDebug() << "Prozess löschen Button geklickt";
+
+    qint64 selectedRow = ui->tableWidgetProzesstabelle->currentRow();
+    qint64 PID = ui->tableWidgetProzesstabelle->item(selectedRow, 0)->text().toULongLong();
+
+    Process process = ProcessTable::instance()->getProcessByPID(PID);
+
+    ProcessTable::instance()->removeProcess(process);
 }
 
 

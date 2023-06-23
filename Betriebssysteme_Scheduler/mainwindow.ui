@@ -26,7 +26,7 @@
    <string>Scheduling Simulator</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_6">
+   <layout class="QVBoxLayout" name="verticalLayout_9">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
@@ -132,6 +132,13 @@
              </property>
              <property name="text">
               <string>Prozess abbrechen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonBeispieleLaden">
+             <property name="text">
+              <string>Beispiele laden</string>
              </property>
             </widget>
            </item>
@@ -415,45 +422,61 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QPushButton" name="pushButtonSimStarten">
-        <property name="text">
-         <string>Simulation starten</string>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Simulation</string>
         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QPushButton" name="pushButtonSimStarten">
+             <property name="text">
+              <string>Simulation starten</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton">
+             <property name="text">
+              <string>Simulation pausieren</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonSimAbbrechen">
+             <property name="text">
+              <string>Simulation abbrechen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonExit">
+             <property name="text">
+              <string>Programm beenden</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonSimAbbrechen">
-        <property name="text">
-         <string>Simulation abbrechen</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonBeispieleLaden">
-        <property name="text">
-         <string>Beispiele laden</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonExit">
-        <property name="text">
-         <string>Programm beenden</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_8"/>
       </item>
      </layout>
     </item>

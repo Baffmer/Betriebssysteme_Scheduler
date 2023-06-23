@@ -39,9 +39,18 @@ public:
     qint64 priorisierung() const;
     void setPriorisierung(qint64 newPriorisierung);
 
-    bool operator==(const Process& process) const {
-        return
-            m_PID == process.m_PID;
+    bool operator == (const Process& process) const {
+        return m_PID == process.PID();
+    }
+
+    bool operator < (const Process& process) const {
+        if (m_priorisierung < process.priorisierung()){
+            return -1;
+        } else if(m_priorisierung > process.priorisierung()){
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
 private:

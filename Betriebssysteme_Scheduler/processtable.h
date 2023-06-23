@@ -21,6 +21,7 @@ public:
     void updateProcessAt(qint64 pos, Process process);
     void updateProcessByPID(qint64 PID, Process process);
     void removeAllProcesses();
+    void sortProcessListByPrio();
     Process getProcessByPID(qint64 PID);
     qint64 sizeProcessList();
 

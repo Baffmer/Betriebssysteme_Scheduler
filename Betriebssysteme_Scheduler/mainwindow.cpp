@@ -136,7 +136,7 @@ void MainWindow::on_pushButtonProzessBearbeiten_clicked()
 
     ProcessTable::instance()->printAllProcesses();
 
-    //Buttons aktivieren
+    //Buttons deaktivieren
     ui->pushButtonProzessAbbrechen->setEnabled(false);
     ui->pushButtonProzessBearbeiten->setEnabled(false);
     ui->pushButtonProzessLoeschen->setEnabled(false);
@@ -153,11 +153,26 @@ void MainWindow::on_pushButtonProzessLoeschen_clicked()
     Process process = ProcessTable::instance()->getProcessByPID(PID);
 
     ProcessTable::instance()->removeProcess(process);
+
+    ui->tableWidgetProzessinformationen->clear();
+
+    //Buttons deaktivieren
+    ui->pushButtonProzessAbbrechen->setEnabled(false);
+    ui->pushButtonProzessBearbeiten->setEnabled(false);
+    ui->pushButtonProzessLoeschen->setEnabled(false);
 }
 
 
 void MainWindow::on_pushButtonProzessAbbrechen_clicked()
 {
     qDebug() << "Prozess abbrechen Button geklickt";
+}
+
+
+void MainWindow::on_pushButtonSimStarten_clicked()
+{
+    qDebug() << "Simulation starten Button geklickt";
+
+    ProcessTable::instance()->sortProcessListByPrio();
 }
 

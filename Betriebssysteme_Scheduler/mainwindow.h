@@ -29,6 +29,8 @@ private slots:
 
     void on_pushButtonProzessAbbrechen_clicked();
 
+    void on_pushButtonSimStarten_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

@@ -18,6 +18,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    qint64 scheduler() const;
+    void setScheduler(qint64 newScheduler);
+
 private slots:
     void on_pushButtonProzessErstellen_clicked();
     void updateProcessTable();
@@ -31,7 +34,11 @@ private slots:
 
     void on_pushButtonSimStarten_clicked();
 
+    void on_comboBoxActiveProzess_activated(int index);
+
 private:
     Ui::MainWindow *ui;
+
+    qint64 m_scheduler;
 };
 #endif // MAINWINDOW_H

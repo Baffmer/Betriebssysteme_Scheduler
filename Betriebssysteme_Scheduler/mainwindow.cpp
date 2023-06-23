@@ -176,3 +176,21 @@ void MainWindow::on_pushButtonSimStarten_clicked()
     ProcessTable::instance()->sortProcessListByPrio();
 }
 
+qint64 MainWindow::scheduler() const
+{
+    return m_scheduler;
+}
+
+void MainWindow::setScheduler(qint64 newScheduler)
+{
+    m_scheduler = newScheduler;
+}
+
+
+void MainWindow::on_comboBoxActiveProzess_activated(int index)
+{
+    qDebug() << "Scheduler:" << index << "ausgewählt";
+
+    this->setScheduler(index);
+}
+

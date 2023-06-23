@@ -2,9 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDesktopServices>
 
 #include "dialogprozesserstellen.h"
 #include "processtable.h"
+#include "dialogueberinformationen.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -37,6 +39,10 @@ private slots:
     void on_comboBoxActiveProzess_activated(int index);
 
     void on_pushButtonBeispieleLaden_clicked();
+
+    void on_action_ber_triggered();
+
+    void on_actionDoku_triggered();
 
 private:
     Ui::MainWindow *ui;

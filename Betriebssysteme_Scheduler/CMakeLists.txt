@@ -24,6 +24,9 @@ set(PROJECT_SOURCES
         dialogprozesserstellen.ui
         processtable.h
         processtable.cpp
+        dialogueberinformationen.h
+        dialogueberinformationen.cpp
+        dialogueberinformationen.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

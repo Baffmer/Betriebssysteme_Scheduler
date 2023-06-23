@@ -495,7 +495,6 @@
     <property name="title">
      <string>Datei</string>
     </property>
-    <addaction name="actionProzess_Laden"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHilfe">

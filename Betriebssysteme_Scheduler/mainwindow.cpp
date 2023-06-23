@@ -197,10 +197,11 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
 
 void MainWindow::on_pushButtonBeispieleLaden_clicked()
 {
+    qDebug() << "Beispiele laden Button geklickt";
+
     ProcessTable::instance()->removeAllProcesses();
     ui->tableWidgetProzessinformationen->clearContents();
 
-    qDebug() << "Beispiele laden Button geklickt";
     //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
     ProcessTable::instance()->addProcess(Process(0, 0, 16, 64, 10, 5, 10));
     ProcessTable::instance()->addProcess(Process(1, 1, 32, 32, 20, 10, 20));
@@ -209,5 +210,23 @@ void MainWindow::on_pushButtonBeispieleLaden_clicked()
     ProcessTable::instance()->addProcess(Process(4, 3, 16, 64, 10, 5, 50));
     ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 10, 50, 10));
     ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 5, 1, 100));
+}
+
+
+void MainWindow::on_action_ber_triggered()
+{
+    qDebug() << "Über Button geklickt";
+
+    DialogUeberInformationen infoFenster;
+    infoFenster.exec();
+}
+
+
+void MainWindow::on_actionDoku_triggered()
+{
+    qDebug() << "Hilfe Button geklickt";
+
+    QString link = "https://github.com/Baffmer/Betriebssysteme_Scheduler";
+    QDesktopServices::openUrl(QUrl(link));
 }
 

@@ -154,7 +154,7 @@ void MainWindow::on_pushButtonProzessLoeschen_clicked()
 
     ProcessTable::instance()->removeProcess(process);
 
-    ui->tableWidgetProzessinformationen->clear();
+    ui->tableWidgetProzessinformationen->clearContents();
 
     //Buttons deaktivieren
     ui->pushButtonProzessAbbrechen->setEnabled(false);
@@ -192,5 +192,22 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
     qDebug() << "Scheduler:" << index << "ausgewählt";
 
     this->setScheduler(index);
+}
+
+
+void MainWindow::on_pushButtonBeispieleLaden_clicked()
+{
+    ProcessTable::instance()->removeAllProcesses();
+    ui->tableWidgetProzessinformationen->clearContents();
+
+    qDebug() << "Beispiele laden Button geklickt";
+    //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
+    ProcessTable::instance()->addProcess(Process(0, 0, 16, 64, 10, 5, 10));
+    ProcessTable::instance()->addProcess(Process(1, 1, 32, 32, 20, 10, 20));
+    ProcessTable::instance()->addProcess(Process(2, 3, 16, 16, 50, 20, 30));
+    ProcessTable::instance()->addProcess(Process(3, 2, 8, 128, 20, 15, 10));
+    ProcessTable::instance()->addProcess(Process(4, 3, 16, 64, 10, 5, 50));
+    ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 10, 50, 10));
+    ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 5, 1, 100));
 }
 

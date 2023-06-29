@@ -21,6 +21,8 @@ public:
 
     qint64 simSpeed() const;
 
+    qint64 dauerProzesswechsel() const;
+
 private slots:
     void on_buttonBox_accepted();
 
@@ -30,6 +32,7 @@ private:
     qint64 m_quantum;
     qint64 m_ioDauer;
     qint64 m_simSpeed;
+    qint64 m_dauerProzesswechsel;
 };
 
 #endif // DIALOGSIMPARAMETER_H

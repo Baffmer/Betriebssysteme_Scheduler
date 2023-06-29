@@ -42,11 +42,11 @@ void MainWindow::updateProcessTable()
             break;
         case 1:
             zustand = "RECHENBEREIT";
-            processColor = Qt::green;
+            processColor = Qt::yellow;
             break;
         case 2:
             zustand = "RECHNEND";
-            processColor = Qt::yellow;
+            processColor = Qt::green;
             break;
         case 3:
             zustand = "ABGESCHLOSSEN";
@@ -341,8 +341,9 @@ void MainWindow::on_pushButtonSimEinstellungen_clicked()
         this->m_ioDauer = prozessParameter.ioDauer();
         this->m_quantum = prozessParameter.quantum();
         this->m_simSpeed = prozessParameter.simSpeed();
+        this->m_dauerProzesswechsel = prozessParameter.dauerProzesswechsel();
     }
 
-    qDebug() << "Sim Geschwindigkeit:" << this->m_simSpeed << "I/O Dauer:" << this->m_ioDauer << "Zeit Quantum:" << this->m_quantum;
+    qDebug() << "Sim Geschwindigkeit:" << this->m_simSpeed << "I/O Dauer:" << this->m_ioDauer << "Zeit Quantum:" << this->m_quantum << "Dauer Prozesswechsel:" << this->m_dauerProzesswechsel;
 }
 

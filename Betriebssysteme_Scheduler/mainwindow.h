@@ -57,5 +57,6 @@ private:
     qint64 m_quantum;
     qint64 m_ioDauer;
     qint64 m_simSpeed;
+    qint64 m_dauerProzesswechsel;
 };
 #endif // MAINWINDOW_H

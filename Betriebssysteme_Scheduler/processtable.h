@@ -29,11 +29,31 @@ public:
 
     QList<Process> processList() const;
 
+    qint64 quantum() const;
+    void setQuantum(qint64 newQuantum);
+
+    qint64 ioDauer() const;
+    void setIoDauer(qint64 newIoDauer);
+
+    qint64 simSpeed() const;
+    void setSimSpeed(qint64 newSimSpeed);
+
+    qint64 dauerProzesswechsel() const;
+    void setDauerProzesswechsel(qint64 newDauerProzesswechsel);
+
+    void updateTimeLines();
+
 private:
     ProcessTable();
     void emitProcessTableUpdate();
 
     QList<Process> m_processList;
+
+    // Sim Parameter
+    qint64 m_quantum = 30;
+    qint64 m_ioDauer = 2;
+    qint64 m_simSpeed = 1; // normal
+    qint64 m_dauerProzesswechsel = 1;
 
 signals:
     void processListChanged();

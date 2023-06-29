@@ -2,19 +2,21 @@
 #define PROCESS_H
 
 #include <QDialog>
-
-enum Zustand{
-    BLOCKIERT,
-    RECHENBEREIT,
-    RECHNEND,
-    ABGESCHLOSSEN
-};
+#include <QDebug>
 
 class Process
 {
+
 public:
     Process();
     Process(qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads);
+
+    enum Zustand{
+        BLOCKIERT,
+        RECHENBEREIT,
+        RECHNEND,
+        ABGESCHLOSSEN,
+    };
 
     qint64 prozessorRegister() const;
     void setProzessorRegister(qint64 newProzessorRegister);
@@ -54,15 +56,28 @@ public:
         }
     }
 
+    qint64 ioDauer() const;
+    void setIoDauer(qint64 newIoDauer);
+    void createTimeLine(qint64 ioDauer);
+
 private:
+
+    void printTimeLine();
+
+    // Prozesstabelle
     qint64 m_PID;
     Zustand m_zustand;
     qint64 m_priorisierung;
 
+    // Prozessinformationstabelle
     qint64 m_prozessorRegister;
     qint64 m_hauptspeicher;
     qint64 m_anzahlEinAusgabe;
     qint64 m_anzahlThreads;
-    qint64 m_dauerThreads;  
+    qint64 m_dauerThreads;
+    qint64 m_ioDauer;
+
+    //Zeitstrahl
+    QList<QString> m_timeLineList;
 };
 #endif // PROCESS_H

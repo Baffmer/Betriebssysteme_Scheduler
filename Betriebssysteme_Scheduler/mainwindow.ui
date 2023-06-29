@@ -193,7 +193,7 @@
               <number>5</number>
              </property>
              <attribute name="horizontalHeaderDefaultSectionSize">
-              <number>95</number>
+              <number>100</number>
              </attribute>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
@@ -224,7 +224,7 @@
              </column>
              <column>
               <property name="text">
-               <string>Dauer</string>
+               <string>Thread-Dauer</string>
               </property>
              </column>
             </widget>

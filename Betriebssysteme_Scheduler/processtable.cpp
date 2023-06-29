@@ -123,6 +123,53 @@ void ProcessTable::emitProcessTableUpdate()
     emit processListChanged();
 }
 
+qint64 ProcessTable::dauerProzesswechsel() const
+{
+    return m_dauerProzesswechsel;
+}
+
+void ProcessTable::setDauerProzesswechsel(qint64 newDauerProzesswechsel)
+{
+    m_dauerProzesswechsel = newDauerProzesswechsel;
+}
+
+void ProcessTable::updateTimeLines()
+{
+    for(Process &process : m_processList){
+        process.createTimeLine(this->m_ioDauer);
+    }
+}
+
+qint64 ProcessTable::simSpeed() const
+{
+    return m_simSpeed;
+}
+
+void ProcessTable::setSimSpeed(qint64 newSimSpeed)
+{
+    m_simSpeed = newSimSpeed;
+}
+
+qint64 ProcessTable::ioDauer() const
+{
+    return m_ioDauer;
+}
+
+void ProcessTable::setIoDauer(qint64 newIoDauer)
+{
+    m_ioDauer = newIoDauer;
+}
+
+qint64 ProcessTable::quantum() const
+{
+    return m_quantum;
+}
+
+void ProcessTable::setQuantum(qint64 newQuantum)
+{
+    m_quantum = newQuantum;
+}
+
 QList<Process> ProcessTable::processList() const
 {
     return m_processList;

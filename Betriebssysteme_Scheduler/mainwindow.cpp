@@ -36,19 +36,19 @@ void MainWindow::updateProcessTable()
         QColor processColor;
 
         switch (process.zustand()) {
-        case 0:
+        case Process::BLOCKIERT:
             zustand = "BLOCKIERT";
             processColor = Qt::red;
             break;
-        case 1:
+        case Process::RECHENBEREIT:
             zustand = "RECHENBEREIT";
             processColor = Qt::yellow;
             break;
-        case 2:
+        case Process::RECHNEND:
             zustand = "RECHNEND";
             processColor = Qt::green;
             break;
-        case 3:
+        case Process::ABGESCHLOSSEN:
             zustand = "ABGESCHLOSSEN";
             processColor = Qt::gray;
             break;
@@ -304,13 +304,15 @@ void MainWindow::on_pushButtonBeispieleLaden_clicked()
     ui->tableWidgetProzessinformationen->clearContents();
 
     //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
-    ProcessTable::instance()->addProcess(Process(0, 0, 16, 64, 10, 5, 10));
-    ProcessTable::instance()->addProcess(Process(1, 1, 32, 32, 20, 10, 20));
-    ProcessTable::instance()->addProcess(Process(2, 3, 16, 16, 50, 20, 30));
-    ProcessTable::instance()->addProcess(Process(3, 2, 8, 128, 20, 15, 10));
-    ProcessTable::instance()->addProcess(Process(4, 3, 16, 64, 10, 5, 50));
-    ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 10, 50, 10));
-    ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 5, 1, 100));
+    ProcessTable::instance()->addProcess(Process(0, 0, 16, 64, 3, 5, 3));
+    ProcessTable::instance()->addProcess(Process(1, 1, 32, 32, 2, 2, 4));
+    ProcessTable::instance()->addProcess(Process(2, 3, 16, 16, 1, 3, 5));
+    ProcessTable::instance()->addProcess(Process(3, 2, 8, 128, 2, 4, 3));
+    ProcessTable::instance()->addProcess(Process(4, 3, 16, 64, 1, 1, 4));
+    ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 4, 3, 5));
+    ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 1, 2, 3));
+
+    ProcessTable::instance()->updateTimeLines();
 }
 
 
@@ -338,12 +340,14 @@ void MainWindow::on_pushButtonSimEinstellungen_clicked()
 
     DialogSimParameter prozessParameter(this);
     if(prozessParameter.exec() == QDialog::Accepted){
-        this->m_ioDauer = prozessParameter.ioDauer();
-        this->m_quantum = prozessParameter.quantum();
-        this->m_simSpeed = prozessParameter.simSpeed();
-        this->m_dauerProzesswechsel = prozessParameter.dauerProzesswechsel();
+        ProcessTable::instance()->setIoDauer(prozessParameter.ioDauer());
+        ProcessTable::instance()->setQuantum(prozessParameter.quantum());
+        ProcessTable::instance()->setSimSpeed(prozessParameter.simSpeed());
+        ProcessTable::instance()->setDauerProzesswechsel(prozessParameter.dauerProzesswechsel());
     }
 
-    qDebug() << "Sim Geschwindigkeit:" << this->m_simSpeed << "I/O Dauer:" << this->m_ioDauer << "Zeit Quantum:" << this->m_quantum << "Dauer Prozesswechsel:" << this->m_dauerProzesswechsel;
+    qDebug() << "Sim Geschwindigkeit:" << ProcessTable::instance()->simSpeed() << "I/O Dauer:" << ProcessTable::instance()->ioDauer() << "Zeit Quantum:" << ProcessTable::instance()->quantum() << "Dauer Prozesswechsel:" << ProcessTable::instance()->dauerProzesswechsel();
+
+    ProcessTable::instance()->updateTimeLines();
 }
 

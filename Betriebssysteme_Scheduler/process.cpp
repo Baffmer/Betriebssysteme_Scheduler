@@ -10,13 +10,13 @@ Process::Process()
 }
 
 Process::Process(qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads)
-    : m_PID(PID), m_zustand(RECHENBEREIT), m_priorisierung(priorisierung), m_prozessorRegister(prozessorRegister), m_hauptspeicher(hauptspeicher), m_anzahlEinAusgabe(anzahlEinAusgabe), m_anzahlThreads(anzahlThreads), m_dauerThreads(dauerThreads)
+    : m_PID(PID), m_zustand(Zustand::RECHENBEREIT), m_priorisierung(priorisierung), m_prozessorRegister(prozessorRegister), m_hauptspeicher(hauptspeicher), m_anzahlEinAusgabe(anzahlEinAusgabe), m_anzahlThreads(anzahlThreads), m_dauerThreads(dauerThreads)
 {
 
 }
 
 qint64 m_PID;
-Zustand m_zustand;
+Process::Zustand m_zustand;
 qint64 m_priorisierung;
 
 qint64 Process::prozessorRegister() const
@@ -79,7 +79,7 @@ void Process::setPID(qint64 newPID)
     m_PID = newPID;
 }
 
-Zustand Process::zustand() const
+Process::Zustand Process::zustand() const
 {
     return m_zustand;
 }
@@ -97,5 +97,65 @@ qint64 Process::priorisierung() const
 void Process::setPriorisierung(qint64 newPriorisierung)
 {
     m_priorisierung = newPriorisierung;
+}
+
+void Process::createTimeLine(qint64 ioDauer)
+{
+    this->m_ioDauer = ioDauer;
+
+    // Länge des Zeitstrahls berechnen
+    qint64 length = this->m_anzahlEinAusgabe * this->ioDauer() + this->m_anzahlThreads * this->m_dauerThreads;
+
+    qint64 ioSlot = (this->m_anzahlThreads * this->m_dauerThreads)/this->m_anzahlEinAusgabe;
+
+    qDebug() << "Dauer Zeitstrahl" << length << "IOslot" << ioSlot;
+
+    for(qint64 i=0; i<this->anzahlThreads(); i++){
+        for(qint64 j=0; j<this->dauerThreads(); j++){
+            m_timeLineList.append("Thread" + QString::number(i+1));
+        }
+    }
+
+    qint64 counter = 1;
+    // Zeitstrahl mit I/O füllen
+    for(qint64 i=1; i<length; i++){
+        if(counter % ioSlot == 0){
+            for(qint64 j=0; j<this->ioDauer(); j++){
+                if(i>m_timeLineList.size()){
+                    m_timeLineList.append("I/O");
+                    //length++;
+                    i++;
+                    counter = 0;
+                } else {
+                    m_timeLineList.insert(i, "I/O");
+                    //length++;
+                    i++;
+                    counter = 0;
+                }
+            }
+        }
+        counter++;
+    }
+
+    printTimeLine();
+}
+
+void Process::printTimeLine()
+{
+    QDebug deb = qDebug();
+
+    for(QString &myString : m_timeLineList){
+        deb << myString;
+    }
+}
+
+qint64 Process::ioDauer() const
+{
+    return m_ioDauer;
+}
+
+void Process::setIoDauer(qint64 newIoDauer)
+{
+    m_ioDauer = newIoDauer;
 }
 

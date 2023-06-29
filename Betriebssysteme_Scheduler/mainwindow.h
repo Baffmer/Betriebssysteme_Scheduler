@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QDesktopServices>
 #include <QString>
+#include <QMetaObject>
 
 #include "dialogprozesserstellen.h"
 #include "processtable.h"
@@ -52,11 +53,5 @@ private:
     Ui::MainWindow *ui;
 
     qint64 m_scheduler;
-
-    // Sim Parameter
-    qint64 m_quantum;
-    qint64 m_ioDauer;
-    qint64 m_simSpeed;
-    qint64 m_dauerProzesswechsel;
 };
 #endif // MAINWINDOW_H

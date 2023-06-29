@@ -8,6 +8,7 @@
 #include "dialogprozesserstellen.h"
 #include "processtable.h"
 #include "dialogueberinformationen.h"
+#include "dialogsimparameter.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -45,9 +46,16 @@ private slots:
 
     void on_actionDoku_triggered();
 
+    void on_pushButtonSimEinstellungen_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     qint64 m_scheduler;
+
+    // Sim Parameter
+    qint64 m_quantum;
+    qint64 m_ioDauer;
+    qint64 m_simSpeed;
 };
 #endif // MAINWINDOW_H

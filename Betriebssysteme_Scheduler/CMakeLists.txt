@@ -27,6 +27,9 @@ set(PROJECT_SOURCES
         dialogueberinformationen.h
         dialogueberinformationen.cpp
         dialogueberinformationen.ui
+        dialogsimparameter.h
+        dialogsimparameter.cpp
+        dialogsimparameter.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

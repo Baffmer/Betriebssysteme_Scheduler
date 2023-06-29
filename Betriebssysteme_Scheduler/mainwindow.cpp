@@ -331,3 +331,18 @@ void MainWindow::on_actionDoku_triggered()
     QDesktopServices::openUrl(QUrl(link));
 }
 
+
+void MainWindow::on_pushButtonSimEinstellungen_clicked()
+{
+    qDebug() << "Sim-Einstellungen Button geklickt";
+
+    DialogSimParameter prozessParameter(this);
+    if(prozessParameter.exec() == QDialog::Accepted){
+        this->m_ioDauer = prozessParameter.ioDauer();
+        this->m_quantum = prozessParameter.quantum();
+        this->m_simSpeed = prozessParameter.simSpeed();
+    }
+
+    qDebug() << "Sim Geschwindigkeit:" << this->m_simSpeed << "I/O Dauer:" << this->m_ioDauer << "Zeit Quantum:" << this->m_quantum;
+}
+

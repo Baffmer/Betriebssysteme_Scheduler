@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QDesktopServices>
+#include <QString>
 
 #include "dialogprozesserstellen.h"
 #include "processtable.h"

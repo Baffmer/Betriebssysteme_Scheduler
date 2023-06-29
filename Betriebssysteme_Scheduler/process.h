@@ -6,7 +6,8 @@
 enum Zustand{
     BLOCKIERT,
     RECHENBEREIT,
-    RECHNEND
+    RECHNEND,
+    ABGESCHLOSSEN
 };
 
 class Process

@@ -7,6 +7,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // init
+    on_comboBoxActiveProzess_activated(0);
+    ui->textBrowserSchedulerInfos->setOpenLinks(false);
+
     connect(ProcessTable::instance(), &ProcessTable::processListChanged, this, &MainWindow::updateProcessTable);
     connect(ui->tableWidgetProzesstabelle, &QTableWidget::itemSelectionChanged, this, &MainWindow::updateProcessInformationTable);
 }
@@ -28,34 +32,45 @@ void MainWindow::updateProcessTable()
 
     for(Process &process : ProcessTable::instance()->processList()){
 
-        QTableWidgetItem* processItem = new QTableWidgetItem(QString::number(process.PID()), 0);
-        processItem->setTextAlignment(Qt::AlignCenter);
-
-        ui->tableWidgetProzesstabelle->setItem(row, 0, processItem);
-
         QString zustand;
+        QColor processColor;
 
         switch (process.zustand()) {
         case 0:
             zustand = "BLOCKIERT";
+            processColor = Qt::red;
             break;
         case 1:
             zustand = "RECHENBEREIT";
+            processColor = Qt::green;
             break;
         case 2:
             zustand = "RECHNEND";
+            processColor = Qt::yellow;
+            break;
+        case 3:
+            zustand = "ABGESCHLOSSEN";
+            processColor = Qt::gray;
             break;
         default:
             break;
         }
 
-        QTableWidgetItem* zustandItem = new QTableWidgetItem(QString::number(process.zustand()), 0);
+        QTableWidgetItem* processItem = new QTableWidgetItem(QString::number(process.PID()), 0);
+        processItem->setTextAlignment(Qt::AlignCenter);
+        processItem->setBackground(processColor);
+
+        ui->tableWidgetProzesstabelle->setItem(row, 0, processItem);
+
+        QTableWidgetItem* zustandItem = new QTableWidgetItem(zustand, 0);
         zustandItem->setTextAlignment(Qt::AlignCenter);
+        zustandItem->setBackground(processColor);
 
         ui->tableWidgetProzesstabelle->setItem(row, 1, zustandItem);
 
         QTableWidgetItem* priorisierungItem = new QTableWidgetItem(QString::number(process.priorisierung()), 0);
         priorisierungItem->setTextAlignment(Qt::AlignCenter);
+        priorisierungItem->setBackground(processColor);
 
         ui->tableWidgetProzesstabelle->setItem(row++, 2, priorisierungItem);
     }
@@ -192,6 +207,92 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
     qDebug() << "Scheduler:" << index << "ausgewählt";
 
     this->setScheduler(index);
+
+    switch(index){
+    case 0:
+
+        ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
+            "<h3>First Come First Served (FCFS) Scheduler (FIFO):</h3>"
+            "<p>"
+            "<i>Vorteile:</i>"
+            "<ul>"
+            "<li>Einfach zu implementieren und zu verstehen.</li>"
+            "<li>Gerechte Behandlung von Aufgaben in der Reihenfolge ihres Eingangs.</li>"
+            "<li>Keine Notwendigkeit zur Schätzung oder Berechnung von Aufgabendauern.</li>"
+            "</ul>"
+            "<p>"
+            "<i>Nachteile:</i>"
+            "<ul>"
+            "<li>Anfällig für das \"Warteschlangen-Effekt\" oder das \"Convoy-Problem\", wenn eine langwierige Aufgabe alle nachfolgenden Aufgaben blockiert.</li>"
+            "<li>Kann zu einer hohen durchschnittlichen Wartezeit führen, wenn lange Aufgaben zuerst eintreffen.</li>"
+            "<li>Keine Optimierung der Ausführungszeit oder Priorisierung von Aufgaben.</li>"
+            "</ul>")));
+
+        break;
+
+    case 1:
+
+        ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
+                                                          "<h3>Shortest Job First (SJF) Scheduler:</h3>"
+                                                          "<p>"
+                                                          "<i>Vorteile:</i>"
+                                                          "<ul>"
+                                                          "<li>Minimiert die durchschnittliche Wartezeit, indem Aufgaben mit der kürzesten geschätzten Ausführungszeit zuerst ausgeführt werden.</li>"
+                                                          "<li>Effiziente Nutzung der Ressourcen, da kurze Aufgaben schnell abgeschlossen werden.</li>"
+                                                          "<li>Kann eine hohe Durchsatzrate und schnelle Antwortzeiten ermöglichen.</li>"
+                                                          "</ul>"
+                                                          "<p>"
+                                                          "<i>Nachteile:</i>"
+                                                          "<ul>"
+                                                          "<li>Schwierigkeiten bei der genauen Schätzung der Ausführungszeit von Aufgaben.</li>"
+                                                          "<li>Anfällig für das \"Starvation-Problem\", wenn lange Aufgaben ständig von kürzeren Aufgaben verdrängt werden.</li>"
+                                                          "<li>Hohe Komplexität bei der Implementierung, insbesondere bei der Verwaltung von Aufgabenprioritäten basierend auf ihren geschätzten Ausführungszeiten.</li>"
+                                                          "</ul>")));
+        break;
+
+    case 2:
+
+        ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
+                                                          "<h3>Round-Robin-Scheduler:</h3>"
+                                                          "<p>"
+                                                          "<i>Vorteile:</i>"
+                                                          "<ul>"
+                                                          "<li>Fairness bei der Verteilung von Ressourcen, da jede Aufgabe in regelmäßigen Zeitintervallen bedient wird.</li>"
+                                                          "<li>Einfache Implementierung und geringe Komplexität.</li>"
+                                                          "<li>Gut geeignet für Szenarien, in denen schnelle Reaktionen auf eingehende Anfragen erforderlich sind.</li>"
+                                                          "</ul>"
+                                                          "<p>"
+                                                          "<i>Nachteile:</i>"
+                                                          "<ul>"
+                                                          "<li>Nicht geeignet für Aufgaben mit unterschiedlichen Prioritäten oder zeitkritischen Anforderungen.</li>"
+                                                          "<li>Kann ineffizient sein, wenn einige Aufgaben mehr Ressourcen benötigen als andere.</li>"
+                                                          "<li>Das Zeitquantum sollte sorgfältig gewählt werden, da zu kleine Werte zu hoher Kontextwechseldauer führen können.</li>"
+                                                          "</ul>")));
+        break;
+
+    case 3:
+
+        ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
+                                                          "<h3>Prioritäts-Scheduler:</h3>"
+                                                          "<p>"
+                                                          "<i>Vorteile:</i>"
+                                                          "<ul>"
+                                                          "<li>Flexibel, da die Prioritäten der Aufgaben angepasst werden können.</li>"
+                                                          "<li>Ermöglicht die Priorisierung kritischer Aufgaben, um Engpässe zu vermeiden.</li>"
+                                                          "<li>Bietet eine bessere Auslastung der Ressourcen, da wichtige Aufgaben bevorzugt behandelt werden.</li>"
+                                                          "</ul>"
+                                                          "<p>"
+                                                          "<i>Nachteile:</i>"
+                                                          "<ul>"
+                                                          "<li>Das Risiko von Starvation (Verhungern) niedrig priorisierter Aufgaben besteht, wenn sie dauerhaft von höher priorisierten Aufgaben verdrängt werden.</li>"
+                                                          "<li>Wenn die Prioritäten nicht gut verwaltet werden, kann es zu einer Beeinträchtigung der Performance und Ressourcenausnutzung kommen.</li>"
+                                                          "<li>Hohe Komplexität bei der Implementierung und Verwaltung der Prioritätsregeln.</li>"
+                                                          "</ul>")));
+        break;
+
+    default:
+        break;
+    }
 }
 
 

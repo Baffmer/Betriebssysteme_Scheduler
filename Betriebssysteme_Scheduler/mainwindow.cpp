@@ -11,6 +11,19 @@ MainWindow::MainWindow(QWidget *parent)
     on_comboBoxActiveProzess_activated(0);
     ui->textBrowserSchedulerInfos->setOpenLinks(false);
 
+    // Native Menu Bar auf dem MAC deaktivieren
+    ui->menubar->setNativeMenuBar(false);
+
+    // Progressbar in Statusbar hinzufügen
+    /*QProgressBar* progressBar = new QProgressBar(this);
+    progressBar->setRange(0, 100);
+    progressBar->setValue(25);
+    progressBar->setTextVisible(true);
+    //progressBar->setFormat("Connecting");
+    ui->statusbar->addPermanentWidget(progressBar);*/
+
+    ui->statusbar->showMessage("Willkommen im Scheduler Simulator!", 3000);
+
     connect(ProcessTable::instance(), &ProcessTable::processListChanged, this, &MainWindow::updateProcessTable);
     connect(ui->tableWidgetProzesstabelle, &QTableWidget::itemSelectionChanged, this, &MainWindow::updateProcessInformationTable);
 }
@@ -132,6 +145,8 @@ void MainWindow::on_pushButtonProzessErstellen_clicked()
     }
 
     ProcessTable::instance()->printAllProcesses();
+
+    ui->statusbar->showMessage("neuer Prozess wurde erstellt", 3000);
 }
 
 void MainWindow::on_pushButtonProzessBearbeiten_clicked()

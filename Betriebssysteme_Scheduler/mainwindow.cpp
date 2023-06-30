@@ -22,15 +22,22 @@ MainWindow::MainWindow(QWidget *parent)
     //progressBar->setFormat("Connecting");
     ui->statusbar->addPermanentWidget(progressBar);*/
 
-    ui->statusbar->showMessage("Willkommen im Scheduler Simulator!", 3000);
+    // Scheduler
+
+    schedulerFirstComeFirstServed = new SchedulerFirstComeFirstServed;
+
+    // Connections
 
     connect(ProcessTable::instance(), &ProcessTable::processListChanged, this, &MainWindow::updateProcessTable);
     connect(ui->tableWidgetProzesstabelle, &QTableWidget::itemSelectionChanged, this, &MainWindow::updateProcessInformationTable);
+
+    ui->statusbar->showMessage("Willkommen im Scheduler Simulator!", 3000);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete schedulerFirstComeFirstServed;
 }
 
 
@@ -81,11 +88,17 @@ void MainWindow::updateProcessTable()
 
         ui->tableWidgetProzesstabelle->setItem(row, 1, zustandItem);
 
+        QTableWidgetItem* taetigkeitItem = new QTableWidgetItem("", 0);
+        taetigkeitItem->setTextAlignment(Qt::AlignCenter);
+        taetigkeitItem->setBackground(processColor);
+
+        ui->tableWidgetProzesstabelle->setItem(row, 2, taetigkeitItem);
+
         QTableWidgetItem* priorisierungItem = new QTableWidgetItem(QString::number(process.priorisierung()), 0);
         priorisierungItem->setTextAlignment(Qt::AlignCenter);
         priorisierungItem->setBackground(processColor);
 
-        ui->tableWidgetProzesstabelle->setItem(row++, 2, priorisierungItem);
+        ui->tableWidgetProzesstabelle->setItem(row++, 3, priorisierungItem);
     }
 }
 
@@ -203,7 +216,30 @@ void MainWindow::on_pushButtonSimStarten_clicked()
 {
     qDebug() << "Simulation starten Button geklickt";
 
-    ProcessTable::instance()->sortProcessListByPrio();
+    switch(this->m_scheduler){
+    case FIRST_COME_FIRST_SERVED:
+        schedulerFirstComeFirstServed->startFirstComeFirstServedSheduling();
+        ui->statusbar->showMessage("Fist Come First Served Scheduling gestartet...", 3000);
+        break;
+
+    case SHORTEST_JOB_FIRST:
+        //schedulerFirstComeFirstServed->startFirstComeFirstServedSheduling();
+        ui->statusbar->showMessage("Shortest Job First Scheduling gestartet...", 3000);
+        break;
+
+    case ROUND_ROBIN_SCHEDULING:
+        //schedulerFirstComeFirstServed->startFirstComeFirstServedSheduling();
+        ui->statusbar->showMessage("Round Robin Scheduling gestartet...", 3000);
+        break;
+
+    case PRIORITAETSSCHEDULING:
+        //schedulerFirstComeFirstServed->startFirstComeFirstServedSheduling();
+        ui->statusbar->showMessage("Prioritätsscheduling gestartet...", 3000);
+        break;
+    default:
+        break;
+    }
+
 }
 
 qint64 MainWindow::scheduler() const
@@ -227,21 +263,21 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
     case 0:
 
         ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
-            "<h3>First Come First Served (FCFS) Scheduler (FIFO):</h3>"
-            "<p>"
-            "<i>Vorteile:</i>"
-            "<ul>"
-            "<li>Einfach zu implementieren und zu verstehen.</li>"
-            "<li>Gerechte Behandlung von Aufgaben in der Reihenfolge ihres Eingangs.</li>"
-            "<li>Keine Notwendigkeit zur Schätzung oder Berechnung von Aufgabendauern.</li>"
-            "</ul>"
-            "<p>"
-            "<i>Nachteile:</i>"
-            "<ul>"
-            "<li>Anfällig für das \"Warteschlangen-Effekt\" oder das \"Convoy-Problem\", wenn eine langwierige Aufgabe alle nachfolgenden Aufgaben blockiert.</li>"
-            "<li>Kann zu einer hohen durchschnittlichen Wartezeit führen, wenn lange Aufgaben zuerst eintreffen.</li>"
-            "<li>Keine Optimierung der Ausführungszeit oder Priorisierung von Aufgaben.</li>"
-            "</ul>")));
+                                                        "<h3>First Come First Served (FCFS) Scheduler (FIFO):</h3>"
+                                                        "<p>"
+                                                        "<i>Vorteile:</i>"
+                                                        "<ul>"
+                                                        "<li>Einfach zu implementieren und zu verstehen.</li>"
+                                                        "<li>Gerechte Behandlung von Aufgaben in der Reihenfolge ihres Eingangs.</li>"
+                                                        "<li>Keine Notwendigkeit zur Schätzung oder Berechnung von Aufgabendauern.</li>"
+                                                        "</ul>"
+                                                        "<p>"
+                                                        "<i>Nachteile:</i>"
+                                                        "<ul>"
+                                                        "<li>Anfällig für das \"Warteschlangen-Effekt\" oder das \"Convoy-Problem\", wenn eine langwierige Aufgabe alle nachfolgenden Aufgaben blockiert.</li>"
+                                                        "<li>Kann zu einer hohen durchschnittlichen Wartezeit führen, wenn lange Aufgaben zuerst eintreffen.</li>"
+                                                        "<li>Keine Optimierung der Ausführungszeit oder Priorisierung von Aufgaben.</li>"
+                                                        "</ul>")));
 
         break;
 

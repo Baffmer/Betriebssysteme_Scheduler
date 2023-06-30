@@ -11,6 +11,8 @@
 #include "dialogueberinformationen.h"
 #include "dialogsimparameter.h"
 
+#include "schedulerfirstcomefirstserved.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -20,6 +22,14 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
+    enum Scheduler{
+        FIRST_COME_FIRST_SERVED,
+        SHORTEST_JOB_FIRST,
+        ROUND_ROBIN_SCHEDULING,
+        PRIORITAETSSCHEDULING
+    };
+
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -53,5 +63,8 @@ private:
     Ui::MainWindow *ui;
 
     qint64 m_scheduler;
+
+    // Scheduler
+    SchedulerFirstComeFirstServed* schedulerFirstComeFirstServed;
 };
 #endif // MAINWINDOW_H

@@ -60,6 +60,8 @@ public:
     void setIoDauer(qint64 newIoDauer);
     void createTimeLine(qint64 ioDauer);
 
+    QList<QString> timeLineList() const;
+
 private:
 
     void printTimeLine();

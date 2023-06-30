@@ -149,6 +149,11 @@ void Process::printTimeLine()
     }
 }
 
+QList<QString> Process::timeLineList() const
+{
+    return m_timeLineList;
+}
+
 qint64 Process::ioDauer() const
 {
     return m_ioDauer;

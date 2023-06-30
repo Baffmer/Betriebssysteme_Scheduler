@@ -30,6 +30,8 @@ set(PROJECT_SOURCES
         dialogsimparameter.h
         dialogsimparameter.cpp
         dialogsimparameter.ui
+        schedulerfirstcomefirstserved.h
+        schedulerfirstcomefirstserved.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

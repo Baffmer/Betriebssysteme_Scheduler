@@ -7,25 +7,40 @@
 
 #include "processtable.h"
 
-class SchedulerFirstComeFirstServed : QObject
+class SchedulerFirstComeFirstServed : public QObject
 {
     Q_OBJECT
 public:
+
+    enum SchedulingStatus{
+        INIT,
+        PROZESS,
+        PROZESSWECHSEL,
+        ENDE
+    };
+
     SchedulerFirstComeFirstServed();
 
-    void startFirstComeFirstServedSheduling();
+    void handleFirstComeFirstServedSheduling();
 
 signals:
-    void signalUpdateProcessTable();
+    void signalUpdateProcessTable(qint64 processPointer, qint64 processCounter);
 
 private slots:
     void timerEvent() {
-        emit signalUpdateProcessTable();
-        qDebug() << "tick";
+        handleFirstComeFirstServedSheduling();
+        emit signalUpdateProcessTable(this->m_prozessPointer, this->m_prozessCounter);
     };
 
 private:
-    QTimer timer;
+    QTimer m_timer;
+
+    // Simulationsgeschwindigkeit
+    qint64 m_tick = 500; // normal
+
+    SchedulingStatus m_schedulingStatus = INIT;
+    qint64 m_prozessPointer = 0;
+    qint64 m_prozessCounter = 0;
 };
 
 #endif // SCHEDULERFIRSTCOMEFIRSTSERVED_H

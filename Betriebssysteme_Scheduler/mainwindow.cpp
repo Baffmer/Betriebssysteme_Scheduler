@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ProcessTable::instance(), &ProcessTable::processListChanged, this, &MainWindow::updateProcessTable);
     connect(ui->tableWidgetProzesstabelle, &QTableWidget::itemSelectionChanged, this, &MainWindow::updateProcessInformationTable);
+    connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
 
     ui->statusbar->showMessage("Willkommen im Scheduler Simulator!", 3000);
 }
@@ -88,9 +89,18 @@ void MainWindow::updateProcessTable()
 
         ui->tableWidgetProzesstabelle->setItem(row, 1, zustandItem);
 
-        QTableWidgetItem* taetigkeitItem = new QTableWidgetItem("", 0);
-        taetigkeitItem->setTextAlignment(Qt::AlignCenter);
-        taetigkeitItem->setBackground(processColor);
+        QString taetigkeit = "";
+        QTableWidgetItem* taetigkeitItem;
+        if(ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().isEmpty()){
+            taetigkeitItem = new QTableWidgetItem(taetigkeit, 0);
+            taetigkeitItem->setBackground(processColor);
+            taetigkeitItem->setTextAlignment(Qt::AlignCenter);
+        } else {
+            taetigkeit = ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().at(this->m_prozessCounter);
+            taetigkeitItem = new QTableWidgetItem(taetigkeit, 0);
+            taetigkeitItem->setBackground(Qt::green);
+            taetigkeitItem->setTextAlignment(Qt::AlignCenter);
+        }
 
         ui->tableWidgetProzesstabelle->setItem(row, 2, taetigkeitItem);
 
@@ -218,7 +228,7 @@ void MainWindow::on_pushButtonSimStarten_clicked()
 
     switch(this->m_scheduler){
     case FIRST_COME_FIRST_SERVED:
-        schedulerFirstComeFirstServed->startFirstComeFirstServedSheduling();
+        schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
         ui->statusbar->showMessage("Fist Come First Served Scheduling gestartet...", 3000);
         break;
 
@@ -355,13 +365,13 @@ void MainWindow::on_pushButtonBeispieleLaden_clicked()
     ui->tableWidgetProzessinformationen->clearContents();
 
     //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
-    ProcessTable::instance()->addProcess(Process(0, 0, 16, 64, 3, 5, 3));
+    ProcessTable::instance()->addProcess(Process(0, 0, 16, 64, 3, 3, 3));
     ProcessTable::instance()->addProcess(Process(1, 1, 32, 32, 2, 2, 4));
-    ProcessTable::instance()->addProcess(Process(2, 3, 16, 16, 1, 3, 5));
-    ProcessTable::instance()->addProcess(Process(3, 2, 8, 128, 2, 4, 3));
-    ProcessTable::instance()->addProcess(Process(4, 3, 16, 64, 1, 1, 4));
-    ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 4, 3, 5));
-    ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 1, 2, 3));
+    ProcessTable::instance()->addProcess(Process(2, 3, 16, 16, 1, 3, 3));
+    //ProcessTable::instance()->addProcess(Process(3, 2, 8, 128, 2, 4, 3));
+    //ProcessTable::instance()->addProcess(Process(4, 3, 16, 64, 1, 1, 4));
+    //ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 4, 3, 5));
+    //ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 1, 2, 3));
 
     ProcessTable::instance()->updateTimeLines();
 }
@@ -400,5 +410,13 @@ void MainWindow::on_pushButtonSimEinstellungen_clicked()
     qDebug() << "Sim Geschwindigkeit:" << ProcessTable::instance()->simSpeed() << "I/O Dauer:" << ProcessTable::instance()->ioDauer() << "Zeit Quantum:" << ProcessTable::instance()->quantum() << "Dauer Prozesswechsel:" << ProcessTable::instance()->dauerProzesswechsel();
 
     ProcessTable::instance()->updateTimeLines();
+}
+
+void MainWindow::updateShedulerInfos(qint64 prozessPointer, qint64 prozessCounter)
+{
+    this->m_prozessCounter = prozessCounter;
+    this->m_prozessPointer = prozessPointer;
+
+    updateProcessTable();
 }
 

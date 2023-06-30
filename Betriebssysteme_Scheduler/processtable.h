@@ -27,7 +27,7 @@ public:
 
     void printAllProcesses();
 
-    QList<Process> processList() const;
+    QList<Process> processList();
 
     qint64 quantum() const;
     void setQuantum(qint64 newQuantum);
@@ -42,6 +42,8 @@ public:
     void setDauerProzesswechsel(qint64 newDauerProzesswechsel);
 
     void updateTimeLines();
+
+    void setProzessZustand(qint64 pos, Process::Zustand zustand);
 
 private:
     ProcessTable();

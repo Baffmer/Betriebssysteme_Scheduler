@@ -59,10 +59,15 @@ private slots:
 
     void on_pushButtonSimEinstellungen_clicked();
 
+    void updateShedulerInfos(qint64 prozessPointer, qint64 prozessCounter);
+
 private:
     Ui::MainWindow *ui;
 
     qint64 m_scheduler;
+
+    qint64 m_prozessPointer = 0;
+    qint64 m_prozessCounter = 0;
 
     // Scheduler
     SchedulerFirstComeFirstServed* schedulerFirstComeFirstServed;

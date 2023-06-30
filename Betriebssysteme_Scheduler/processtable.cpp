@@ -140,6 +140,15 @@ void ProcessTable::updateTimeLines()
     }
 }
 
+void ProcessTable::setProzessZustand(qint64 pos, Process::Zustand zustand)
+{
+    Process process = this->m_processList.at(pos);
+
+    process.setZustand(zustand);
+
+    this->m_processList.replace(pos, process);
+}
+
 qint64 ProcessTable::simSpeed() const
 {
     return m_simSpeed;
@@ -170,7 +179,7 @@ void ProcessTable::setQuantum(qint64 newQuantum)
     m_quantum = newQuantum;
 }
 
-QList<Process> ProcessTable::processList() const
+QList<Process> ProcessTable::processList()
 {
     return m_processList;
 }

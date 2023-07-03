@@ -62,8 +62,6 @@ private slots:
 
     void updateShedulerInfos(qint64 prozessPointer, qint64 prozessCounter);
 
-    void updateProcessTableCurrentProcess();
-
     void on_pushButtonSimPausieren_clicked();
 
     void shedulingFinishedHandler(qint64 sheduler);

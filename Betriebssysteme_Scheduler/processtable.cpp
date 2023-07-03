@@ -85,6 +85,44 @@ void ProcessTable::sortProcessListByPrio()
     emitProcessTableUpdate();
 }
 
+void ProcessTable::sortProcessListByPID()
+{
+    std::qsort(m_processList.begin(), m_processList.size(), sizeof(Process), [](const void* x, const void* y)
+               {
+                   const Process process1 = *static_cast<const Process*>(x);
+                   const Process process2 = *static_cast<const Process*>(y);
+                   int arg1 = process1.PID();
+                   int arg2 = process2.PID();
+
+                   if (arg1 < arg2)
+                       return -1;
+                   if (arg1 > arg2)
+                       return 1;
+                   return 0;
+               });
+
+    emitProcessTableUpdate();
+}
+
+void ProcessTable::sortProcessListByTime()
+{
+    std::qsort(m_processList.begin(), m_processList.size(), sizeof(Process), [](const void* x, const void* y)
+               {
+                   const Process process1 = *static_cast<const Process*>(x);
+                   const Process process2 = *static_cast<const Process*>(y);
+                   int arg1 = process1.timeLineList().size();
+                   int arg2 = process2.timeLineList().size();
+
+                   if (arg1 < arg2)
+                       return -1;
+                   if (arg1 > arg2)
+                       return 1;
+                   return 0;
+               });
+
+    emitProcessTableUpdate();
+}
+
 Process ProcessTable::getProcessByPID(qint64 PID)
 {
     for (Process &process : m_processList) {

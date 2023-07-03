@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // init
     on_comboBoxActiveProzess_activated(0);
-    ui->textBrowserSchedulerInfos->setOpenLinks(false);
+    //ui->textBrowserSchedulerInfos->setOpenLinks(false);
 
     // Native Menu Bar auf dem MAC deaktivieren
     ui->menubar->setNativeMenuBar(false);
@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->statusbar->showMessage("Willkommen im Scheduler Simulator!", 3000);
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -123,89 +124,10 @@ void MainWindow::updateProcessTable()
     }
 }
 
-void MainWindow::updateProcessTableCurrentProcess(){
-
-    QList<QTableWidgetSelectionRange> selectedRange;
-    selectedRange = ui->tableWidgetProzesstabelle->selectedRanges();
-
-    qDebug() << selectedRange.size();
-
-    for(Process &process : ProcessTable::instance()->processList()){
-
-        QString zustand;
-        QColor processColor;
-
-        switch (process.zustand()) {
-        case Process::BLOCKIERT:
-            zustand = "BLOCKIERT";
-            processColor = Qt::red;
-            break;
-        case Process::RECHENBEREIT:
-            zustand = "RECHENBEREIT";
-            processColor = Qt::yellow;
-            break;
-        case Process::RECHNEND:
-            zustand = "RECHNEND";
-            processColor = Qt::green;
-            break;
-        case Process::ABGESCHLOSSEN:
-            zustand = "ABGESCHLOSSEN";
-            processColor = Qt::gray;
-            break;
-        case Process::ABGEBROCHEN:
-            zustand = "ABGEBROCHEN";
-            processColor = Qt::darkGray;
-            break;
-        default:
-            break;
-        }
-
-        QTableWidgetItem* processItem = new QTableWidgetItem(QString::number(process.PID()), 0);
-        processItem->setTextAlignment(Qt::AlignCenter);
-        processItem->setBackground(processColor);
-
-        ui->tableWidgetProzesstabelle->setItem(this->m_prozessPointer, 0, processItem);
-
-        QString taetigkeit = "";
-        QTableWidgetItem* taetigkeitItem;
-        if(ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().isEmpty()){
-            taetigkeitItem = new QTableWidgetItem(taetigkeit, 0);
-            taetigkeitItem->setBackground(processColor);
-            taetigkeitItem->setTextAlignment(Qt::AlignCenter);
-        } else {
-            taetigkeit = ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().at(this->m_prozessCounter);
-            taetigkeitItem = new QTableWidgetItem(taetigkeit, 0);
-            taetigkeitItem->setBackground(Qt::green);
-            taetigkeitItem->setTextAlignment(Qt::AlignCenter);
-        }
-
-        ui->tableWidgetProzesstabelle->setItem(this->m_prozessPointer, 2, taetigkeitItem);
-
-        if(taetigkeit.contains("I/O")){
-            zustand = "BLOCKIERT";
-            processColor = Qt::red;
-        }
-        QTableWidgetItem* zustandItem = new QTableWidgetItem(zustand, 0);
-        zustandItem->setTextAlignment(Qt::AlignCenter);
-        zustandItem->setBackground(processColor);
-
-        ui->tableWidgetProzesstabelle->setItem(this->m_prozessPointer, 1, zustandItem);
-
-        QTableWidgetItem* priorisierungItem = new QTableWidgetItem(QString::number(process.priorisierung()), 0);
-        priorisierungItem->setTextAlignment(Qt::AlignCenter);
-        priorisierungItem->setBackground(processColor);
-
-        ui->tableWidgetProzesstabelle->setItem(this->m_prozessPointer, 3, priorisierungItem);
-    }
-
-    if(selectedRange.size() == 1){
-        ui->tableWidgetProzesstabelle->selectRow(selectedRange.at(0).topRow());
-    }
-}
 
 void MainWindow::updateProcessInformationTable()
 {
-    qDebug() << "updating Process Information Table";
+    //qDebug() << "updating Process Information Table";
 
     //Buttons aktivieren
     ui->pushButtonProzessAbbrechen->setEnabled(true);
@@ -250,6 +172,7 @@ void MainWindow::updateProcessInformationTable()
     ui->tableWidgetProzessinformationen->setItem(0, 4, dauerThreadsItem);
 }
 
+
 void MainWindow::on_pushButtonProzessErstellen_clicked()
 {
     DialogProzessErstellen prozessErstellen(this, ProcessTable::instance()->sizeProcessList());
@@ -262,6 +185,7 @@ void MainWindow::on_pushButtonProzessErstellen_clicked()
 
     ui->statusbar->showMessage("neuer Prozess wurde erstellt", 3000);
 }
+
 
 void MainWindow::on_pushButtonProzessBearbeiten_clicked()
 {
@@ -323,6 +247,114 @@ void MainWindow::on_pushButtonProzessAbbrechen_clicked()
 }
 
 
+qint64 MainWindow::scheduler() const
+{
+    return m_scheduler;
+}
+
+
+void MainWindow::setScheduler(qint64 newScheduler)
+{
+    m_scheduler = newScheduler;
+}
+
+
+void MainWindow::on_pushButtonBeispieleLaden_clicked()
+{
+    qDebug() << "Beispiele laden Button geklickt";
+
+    ProcessTable::instance()->removeAllProcesses();
+    ui->tableWidgetProzessinformationen->clearContents();
+
+    //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
+    ProcessTable::instance()->addProcess(Process(0, 0, 0, 0, 3, 3, 3));
+    ProcessTable::instance()->addProcess(Process(1, 1, 0, 0, 2, 2, 4));
+    ProcessTable::instance()->addProcess(Process(2, 4, 0, 0, 1, 3, 3));
+    ProcessTable::instance()->addProcess(Process(3, 2, 0, 0, 5, 2, 10));
+    ProcessTable::instance()->addProcess(Process(4, 3, 0, 0, 5, 5, 7));
+    //ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 4, 3, 5));
+    //ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 1, 2, 3));
+
+    ProcessTable::instance()->updateTimeLines();
+
+    ui->statusbar->showMessage("Beispiele geladen.", 3000);
+}
+
+
+void MainWindow::on_action_ber_triggered()
+{
+    qDebug() << "Über Button geklickt";
+
+    DialogUeberInformationen infoFenster;
+    infoFenster.exec();
+}
+
+
+void MainWindow::on_actionDoku_triggered()
+{
+    qDebug() << "Hilfe Button geklickt";
+
+    QString link = "https://github.com/Baffmer/Betriebssysteme_Scheduler";
+    QDesktopServices::openUrl(QUrl(link));
+}
+
+
+void MainWindow::on_pushButtonSimEinstellungen_clicked()
+{
+    qDebug() << "Sim-Einstellungen Button geklickt";
+
+    DialogSimParameter prozessParameter(this);
+    if(prozessParameter.exec() == QDialog::Accepted){
+        ProcessTable::instance()->setIoDauer(prozessParameter.ioDauer());
+        ProcessTable::instance()->setQuantum(prozessParameter.quantum());
+        ProcessTable::instance()->setSimSpeed(prozessParameter.simSpeed());
+        ProcessTable::instance()->setDauerProzesswechsel(prozessParameter.dauerProzesswechsel());
+
+        this->schedulerFirstComeFirstServed->setSimSpeed(ProcessTable::instance()->simSpeed());
+
+        qDebug() << "Sim Geschwindigkeit:" << ProcessTable::instance()->simSpeed() << "I/O Dauer:" << ProcessTable::instance()->ioDauer() << "Zeit Quantum:" << ProcessTable::instance()->quantum() << "Dauer Prozesswechsel:" << ProcessTable::instance()->dauerProzesswechsel();
+
+        ProcessTable::instance()->updateTimeLines();
+
+        ui->statusbar->showMessage("Simulationseinstellungen übernommen.", 3000);
+    } else {
+        ui->statusbar->showMessage(" keine neuen Simulationseinstellungen übernommen.", 3000);
+    }
+}
+
+void MainWindow::updateShedulerInfos(qint64 prozessPointer, qint64 prozessCounter)
+{
+    this->m_prozessCounter = prozessCounter;
+    this->m_prozessPointer = prozessPointer;
+
+    // update progressBar
+    qint64 newProgressBarValue = ui->progressBar->value() + ceil(10000.0 / ProcessTable::instance()->getSimTimeSlotsSum());
+    ui->progressBar->setValue(newProgressBarValue);
+
+    updateProcessTable();
+}
+
+void MainWindow::on_pushButtonSimAbbrechen_clicked()
+{
+    qDebug() << "Sim-Abbrechen Button geklickt";
+
+    this->m_elapsedTime = 0;
+
+    ui->pushButtonSimStarten->setEnabled(true);
+    ui->pushButtonSimAbbrechen->setEnabled(false);
+    ui->pushButtonSimPausieren->setEnabled(false);
+
+    schedulerFirstComeFirstServed->pauseTimer();
+
+    ProcessTable::instance()->resetSimulation();
+
+    ui->progressBar->setValue(0);
+
+    schedulerFirstComeFirstServed->reset();
+
+    ui->statusbar->showMessage("Simulation abgebrochen.", 3000);
+}
+
 void MainWindow::on_pushButtonSimStarten_clicked()
 {
     qDebug() << "Simulation starten Button geklickt";
@@ -342,12 +374,14 @@ void MainWindow::on_pushButtonSimStarten_clicked()
 
     switch(this->m_scheduler){
     case FIRST_COME_FIRST_SERVED:
+        ProcessTable::instance()->sortProcessListByPID();
         schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
         ui->statusbar->showMessage("Fist Come First Served Scheduling gestartet...", 3000);
         break;
 
     case SHORTEST_JOB_FIRST:
-        //schedulerFirstComeFirstServed->startFirstComeFirstServedSheduling();
+        ProcessTable::instance()->sortProcessListByTime();
+        schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
         ui->statusbar->showMessage("Shortest Job First Scheduling gestartet...", 3000);
         break;
 
@@ -357,25 +391,86 @@ void MainWindow::on_pushButtonSimStarten_clicked()
         break;
 
     case PRIORITAETSSCHEDULING:
-        //schedulerFirstComeFirstServed->startFirstComeFirstServedSheduling();
+        ProcessTable::instance()->sortProcessListByPrio();
+        schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
         ui->statusbar->showMessage("Prioritätsscheduling gestartet...", 3000);
-        break;
+            break;
     default:
         break;
     }
 
 }
 
-qint64 MainWindow::scheduler() const
+void MainWindow::on_pushButtonSimPausieren_clicked()
 {
-    return m_scheduler;
+    qDebug() << "Sim-Pausieren Button geklickt";
+    ui->pushButtonSimStarten->setEnabled(true);
+    ui->pushButtonSimAbbrechen->setEnabled(true);
+    ui->pushButtonSimPausieren->setEnabled(false);
+
+    this->m_elapsedTime += this->m_timer.elapsed();
+
+    switch(this->m_scheduler){
+    case FIRST_COME_FIRST_SERVED:
+        schedulerFirstComeFirstServed->pauseTimer();
+        ui->statusbar->showMessage("Simulation pausiert", 3000);
+        break;
+
+    case SHORTEST_JOB_FIRST:
+        //schedulerFirstComeFirstServed->pauseTimer();
+        ui->statusbar->showMessage("Simulation pausiert", 3000);
+        break;
+
+    case ROUND_ROBIN_SCHEDULING:
+        //schedulerFirstComeFirstServed->pauseTimer();
+        ui->statusbar->showMessage("Simulation pausiert", 3000);
+        break;
+
+    case PRIORITAETSSCHEDULING:
+        //schedulerFirstComeFirstServed->pauseTimer();
+        ui->statusbar->showMessage("Simulation pausiert", 3000);
+            break;
+    default:
+        break;
+    } 
 }
 
-void MainWindow::setScheduler(qint64 newScheduler)
+void MainWindow::shedulingFinishedHandler(qint64 sheduler)
 {
-    m_scheduler = newScheduler;
-}
+    ui->pushButtonSimStarten->setEnabled(true);
+    ui->pushButtonSimAbbrechen->setEnabled(false);
+    ui->pushButtonSimPausieren->setEnabled(false);
 
+    // Evaluation
+    ui->labelSimZeitOut->setText(QString::number((this->m_elapsedTime + this->m_timer.elapsed())/1000.0) + "s");
+    ui->labelProzesswechselOut->setText(QString::number(ProcessTable::instance()->getAnzahlProzesswechsel()));
+
+    this->m_elapsedTime = 0;
+
+    switch(sheduler){
+    case FIRST_COME_FIRST_SERVED:
+        ui->progressBar->setValue(10000);
+        ui->statusbar->showMessage("Simulation beendet", 3000);
+        break;
+
+    case SHORTEST_JOB_FIRST:
+        ui->progressBar->setValue(10000);
+        ui->statusbar->showMessage("Simulation beendet", 3000);
+        break;
+
+    case ROUND_ROBIN_SCHEDULING:
+        ui->progressBar->setValue(10000);
+        ui->statusbar->showMessage("Simulation beendet", 3000);
+        break;
+
+    case PRIORITAETSSCHEDULING:
+        ui->progressBar->setValue(10000);
+        ui->statusbar->showMessage("Simulation beendet", 3000);
+        break;
+    default:
+        break;
+    }
+}
 
 void MainWindow::on_comboBoxActiveProzess_activated(int index)
 {
@@ -469,173 +564,3 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
         break;
     }
 }
-
-
-void MainWindow::on_pushButtonBeispieleLaden_clicked()
-{
-    qDebug() << "Beispiele laden Button geklickt";
-
-    ProcessTable::instance()->removeAllProcesses();
-    ui->tableWidgetProzessinformationen->clearContents();
-
-    //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
-    ProcessTable::instance()->addProcess(Process(0, 0, 16, 64, 3, 3, 3));
-    ProcessTable::instance()->addProcess(Process(1, 1, 32, 32, 2, 2, 4));
-    ProcessTable::instance()->addProcess(Process(2, 3, 16, 16, 1, 3, 3));
-    ProcessTable::instance()->addProcess(Process(3, 2, 8, 128, 5, 2, 10));
-    ProcessTable::instance()->addProcess(Process(4, 3, 16, 64, 5, 5, 7));
-    //ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 4, 3, 5));
-    //ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 1, 2, 3));
-
-    ProcessTable::instance()->updateTimeLines();
-
-    ui->statusbar->showMessage("Beispiele geladen.", 3000);
-}
-
-
-void MainWindow::on_action_ber_triggered()
-{
-    qDebug() << "Über Button geklickt";
-
-    DialogUeberInformationen infoFenster;
-    infoFenster.exec();
-}
-
-
-void MainWindow::on_actionDoku_triggered()
-{
-    qDebug() << "Hilfe Button geklickt";
-
-    QString link = "https://github.com/Baffmer/Betriebssysteme_Scheduler";
-    QDesktopServices::openUrl(QUrl(link));
-}
-
-
-void MainWindow::on_pushButtonSimEinstellungen_clicked()
-{
-    qDebug() << "Sim-Einstellungen Button geklickt";
-
-    DialogSimParameter prozessParameter(this);
-    if(prozessParameter.exec() == QDialog::Accepted){
-        ProcessTable::instance()->setIoDauer(prozessParameter.ioDauer());
-        ProcessTable::instance()->setQuantum(prozessParameter.quantum());
-        ProcessTable::instance()->setSimSpeed(prozessParameter.simSpeed());
-        ProcessTable::instance()->setDauerProzesswechsel(prozessParameter.dauerProzesswechsel());
-
-        this->schedulerFirstComeFirstServed->setSimSpeed(ProcessTable::instance()->simSpeed());
-
-        qDebug() << "Sim Geschwindigkeit:" << ProcessTable::instance()->simSpeed() << "I/O Dauer:" << ProcessTable::instance()->ioDauer() << "Zeit Quantum:" << ProcessTable::instance()->quantum() << "Dauer Prozesswechsel:" << ProcessTable::instance()->dauerProzesswechsel();
-
-        ProcessTable::instance()->updateTimeLines();
-
-        ui->statusbar->showMessage("Simulationseinstellungen übernommen.", 3000);
-    } else {
-        ui->statusbar->showMessage(" keine neuen Simulationseinstellungen übernommen.", 3000);
-    }
-}
-
-void MainWindow::updateShedulerInfos(qint64 prozessPointer, qint64 prozessCounter)
-{
-    this->m_prozessCounter = prozessCounter;
-    this->m_prozessPointer = prozessPointer;
-
-    // update progressBar
-    qint64 newProgressBarValue = ui->progressBar->value() + ceil(10000.0 / ProcessTable::instance()->getSimTimeSlotsSum());
-    ui->progressBar->setValue(newProgressBarValue);
-
-    updateProcessTable();
-}
-
-void MainWindow::on_pushButtonSimPausieren_clicked()
-{
-    qDebug() << "Sim-Pausieren Button geklickt";
-    ui->pushButtonSimStarten->setEnabled(true);
-    ui->pushButtonSimAbbrechen->setEnabled(true);
-    ui->pushButtonSimPausieren->setEnabled(false);
-
-    this->m_elapsedTime += this->m_timer.elapsed();
-
-    switch(this->m_scheduler){
-    case FIRST_COME_FIRST_SERVED:
-        schedulerFirstComeFirstServed->pauseTimer();
-        ui->statusbar->showMessage("Simulation pausiert", 3000);
-        break;
-
-    case SHORTEST_JOB_FIRST:
-        //schedulerFirstComeFirstServed->pauseTimer();
-        ui->statusbar->showMessage("Simulation pausiert", 3000);
-        break;
-
-    case ROUND_ROBIN_SCHEDULING:
-        //schedulerFirstComeFirstServed->pauseTimer();
-        ui->statusbar->showMessage("Simulation pausiert", 3000);
-        break;
-
-    case PRIORITAETSSCHEDULING:
-        //schedulerFirstComeFirstServed->pauseTimer();
-        ui->statusbar->showMessage("Simulation pausiert", 3000);
-            break;
-    default:
-        break;
-    } 
-}
-
-void MainWindow::shedulingFinishedHandler(qint64 sheduler)
-{
-    ui->pushButtonSimStarten->setEnabled(true);
-    ui->pushButtonSimAbbrechen->setEnabled(false);
-    ui->pushButtonSimPausieren->setEnabled(false);
-
-    // Evaluation
-    ui->labelSimZeitOut->setText(QString::number((this->m_elapsedTime + this->m_timer.elapsed())/1000.0) + "s");
-    ui->labelProzesswechselOut->setText(QString::number(ProcessTable::instance()->getAnzahlProzesswechsel()));
-
-    this->m_elapsedTime = 0;
-
-    switch(sheduler){
-    case FIRST_COME_FIRST_SERVED:
-        ui->progressBar->setValue(10000);
-        ui->statusbar->showMessage("Simulation beendet", 3000);
-        break;
-
-    case SHORTEST_JOB_FIRST:
-        ui->progressBar->setValue(10000);
-        ui->statusbar->showMessage("Simulation beendet", 3000);
-        break;
-
-    case ROUND_ROBIN_SCHEDULING:
-        ui->progressBar->setValue(10000);
-        ui->statusbar->showMessage("Simulation beendet", 3000);
-        break;
-
-    case PRIORITAETSSCHEDULING:
-        ui->progressBar->setValue(10000);
-        ui->statusbar->showMessage("Simulation beendet", 3000);
-        break;
-    default:
-        break;
-    }
-}
-
-
-void MainWindow::on_pushButtonSimAbbrechen_clicked()
-{
-    qDebug() << "Sim-Abbrechen Button geklickt";
-
-    this->m_elapsedTime = 0;
-
-    ui->pushButtonSimStarten->setEnabled(true);
-    ui->pushButtonSimAbbrechen->setEnabled(false);
-    ui->pushButtonSimPausieren->setEnabled(false);
-
-    schedulerFirstComeFirstServed->pauseTimer();
-
-    ProcessTable::instance()->resetSimulation();
-
-    ui->progressBar->setValue(0);
-
-    schedulerFirstComeFirstServed->reset();
-
-    ui->statusbar->showMessage("Simulation abgebrochen.", 3000);
-}
-

@@ -119,7 +119,7 @@ void Process::createTimeLine(qint64 ioDauer)
 
     for(qint64 i=0; i<this->anzahlThreads(); i++){
         for(qint64 j=0; j<this->dauerThreads(); j++){
-            m_timeLineList.append("Thread" + QString::number(i+1));
+            m_timeLineList.append("Thread " + QString::number(i+1));
         }
     }
 

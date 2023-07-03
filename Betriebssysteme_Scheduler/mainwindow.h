@@ -5,6 +5,7 @@
 #include <QDesktopServices>
 #include <QString>
 #include <QMetaObject>
+#include <QElapsedTimer>
 
 #include "dialogprozesserstellen.h"
 #include "processtable.h"
@@ -65,6 +66,10 @@ private slots:
 
     void on_pushButtonSimPausieren_clicked();
 
+    void shedulingFinishedHandler(qint64 sheduler);
+
+    void on_pushButtonSimAbbrechen_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -75,5 +80,9 @@ private:
 
     // Scheduler
     SchedulerFirstComeFirstServed* schedulerFirstComeFirstServed;
+
+    // Timer
+    QElapsedTimer m_timer;
+    qint64 m_elapsedTime = 0;
 };
 #endif // MAINWINDOW_H

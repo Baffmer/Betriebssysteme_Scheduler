@@ -149,6 +149,44 @@ void ProcessTable::setProzessZustand(qint64 pos, Process::Zustand zustand)
     this->m_processList.replace(pos, process);
 }
 
+
+qint64 ProcessTable::getSimTimeSlotsSum()
+{
+    this->m_simTimeSlotsSum = 0;
+
+    for(Process &process : this->m_processList){
+        this->m_simTimeSlotsSum += process.timeLineList().size();
+    }
+
+    return this->m_simTimeSlotsSum;
+}
+
+void ProcessTable::resetAnzahlProzesswechsel()
+{
+    this->m_anzahlProzesswechsel = 0;
+}
+
+void ProcessTable::incrementAnzahlProzesswechsel()
+{
+    this->m_anzahlProzesswechsel++;
+}
+
+qint64 ProcessTable::getAnzahlProzesswechsel()
+{
+    return this->m_anzahlProzesswechsel;
+}
+
+void ProcessTable::resetSimulation()
+{
+    this->m_anzahlProzesswechsel = 0;
+
+    for(Process &process : this->m_processList){
+        process.setZustand(Process::RECHENBEREIT);
+    }
+
+    emitProcessTableUpdate();
+}
+
 qint64 ProcessTable::simSpeed() const
 {
     return m_simSpeed;

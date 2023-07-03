@@ -45,6 +45,16 @@ public:
 
     void setProzessZustand(qint64 pos, Process::Zustand zustand);
 
+    qint64 getSimTimeSlotsSum();
+
+    void resetAnzahlProzesswechsel();
+
+    void incrementAnzahlProzesswechsel();
+
+    qint64 getAnzahlProzesswechsel();
+
+    void resetSimulation();
+
 private:
     ProcessTable();
     void emitProcessTableUpdate();
@@ -52,10 +62,16 @@ private:
     QList<Process> m_processList;
 
     // Sim Parameter
-    qint64 m_quantum = 30;
+    qint64 m_quantum = 10;
     qint64 m_ioDauer = 2;
     qint64 m_simSpeed = 1; // normal
-    qint64 m_dauerProzesswechsel = 1;
+    qint64 m_dauerProzesswechsel = 5;
+
+    qint64 m_simTimeSlotsSum = 0;
+
+    // Evaluation
+    qint64 m_anzahlProzesswechsel;
+    qint64 m_simulationsdauer;
 
 signals:
     void processListChanged();

@@ -5,11 +5,11 @@ SchedulerFirstComeFirstServed::SchedulerFirstComeFirstServed()
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(timerEvent()));
 
     if(ProcessTable::instance()->simSpeed() == 0){
-        this->m_tick = 1000;
-    } else if (ProcessTable::instance()->simSpeed() == 1) {
         this->m_tick = 500;
-    } else {
+    } else if (ProcessTable::instance()->simSpeed() == 1) {
         this->m_tick = 250;
+    } else {
+        this->m_tick = 100;
     }
 
     m_timer.setSingleShot(true);
@@ -49,13 +49,13 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
                 m_timer.start(this->m_tick);
             } else {
                 ProcessTable::instance()->setProzessZustand(m_prozessPointer, Process::ABGESCHLOSSEN);
-                qDebug() << "nächster Prozess";
+                //qDebug() << "nächster Prozess";
                 this->m_prozessCounter = 0;
                 this->m_schedulingStatus = PROZESSWECHSEL;
                 m_timer.start(0);
             }
         } else {
-            qDebug() << "nächster Prozess";
+            //qDebug() << "nächster Prozess";
             //this->m_prozessCounter = 0;
             this->m_schedulingStatus = PROZESSWECHSEL;
             m_timer.start(0);
@@ -66,7 +66,8 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
         if(ProcessTable::instance()->processList().size() - 1 > this->m_prozessPointer){
             if(ProcessTable::instance()->processList().at(this->m_prozessPointer + 1).zustand() == Process::RECHENBEREIT){
                 //;
-                qDebug() << "Prozesswechsel";
+                //qDebug() << "Prozesswechsel";
+                ProcessTable::instance()->incrementAnzahlProzesswechsel();
                 this->m_schedulingStatus = PROZESS;
                 m_timer.start(ProcessTable::instance()->dauerProzesswechsel()*this->m_tick);
             } else {
@@ -85,6 +86,7 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
         this->m_schedulingStatus = INIT;
         this->m_prozessPointer = 0;
         this->m_prozessCounter = 0;
+        emit signalShedulingFCFSfinished(0);
         break;
 
     default:
@@ -95,5 +97,22 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
 void SchedulerFirstComeFirstServed::pauseTimer()
 {
     m_timer.stop();
-    //m_hasPaused = true;
+}
+
+void SchedulerFirstComeFirstServed::reset()
+{
+    this->m_prozessCounter = 0;
+    this->m_prozessPointer = 0;
+    this->m_schedulingStatus = this->INIT;
+}
+
+void SchedulerFirstComeFirstServed::setSimSpeed(qint64 value)
+{
+    if(value == 0){
+        this->m_tick = 500;
+    } else if (value == 1) {
+        this->m_tick = 250;
+    } else {
+        this->m_tick = 100;
+    }
 }

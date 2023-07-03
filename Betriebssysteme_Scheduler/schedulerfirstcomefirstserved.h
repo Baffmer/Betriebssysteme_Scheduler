@@ -27,8 +27,13 @@ public:
 
     void pauseTimer();
 
+    void reset();
+
+    void setSimSpeed(qint64 value);
+
 signals:
     void signalUpdateProcessTable(qint64 processPointer, qint64 processCounter);
+    void signalShedulingFCFSfinished(qint64 sheduler);
 
 private slots:
     void timerEvent() {
@@ -40,13 +45,11 @@ private:
     QTimer m_timer;
 
     // Simulationsgeschwindigkeit
-    qint64 m_tick = 500; // normal
+    qint64 m_tick = 250; // normal
 
     SchedulingStatus m_schedulingStatus = INIT;
     qint64 m_prozessPointer = 0;
     qint64 m_prozessCounter = 0;
-
-    bool m_hasPaused = false;
 };
 
 #endif // SCHEDULERFIRSTCOMEFIRSTSERVED_H

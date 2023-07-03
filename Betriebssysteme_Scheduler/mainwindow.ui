@@ -334,7 +334,7 @@
                 <widget class="QLabel" name="labelSimZeitOut">
                  <property name="minimumSize">
                   <size>
-                   <width>25</width>
+                   <width>50</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -345,7 +345,7 @@
                   </size>
                  </property>
                  <property name="text">
-                  <string>50s</string>
+                  <string>                </string>
                  </property>
                  <property name="textFormat">
                   <enum>Qt::AutoText</enum>
@@ -389,7 +389,7 @@
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>25</width>
+                   <width>50</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -406,7 +406,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="text">
-                  <string>42</string>
+                  <string>                </string>
                  </property>
                 </widget>
                </item>
@@ -438,7 +438,7 @@
            <item>
             <widget class="QProgressBar" name="progressBar">
              <property name="value">
-              <number>24</number>
+              <number>0</number>
              </property>
             </widget>
            </item>
@@ -468,6 +468,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonSimPausieren">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Simulation pausieren</string>
              </property>
@@ -475,6 +478,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonSimAbbrechen">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Simulation abbrechen</string>
              </property>

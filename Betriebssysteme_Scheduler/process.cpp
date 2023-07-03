@@ -101,6 +101,13 @@ void Process::setPriorisierung(qint64 newPriorisierung)
 
 void Process::createTimeLine(qint64 ioDauer)
 {
+    // reset Timeline / remove all I/O Slots
+    for(qint64 i=0; i<this->m_timeLineList.size(); i++){
+        if(this->m_timeLineList.at(i).contains("I/O")){
+            this->m_timeLineList.remove(i);
+        }
+    }
+
     this->m_ioDauer = ioDauer;
 
     // Länge des Zeitstrahls berechnen

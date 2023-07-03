@@ -39,7 +39,7 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
 
         if(ProcessTable::instance()->processList().at(this->m_prozessPointer).zustand() != Process::ABGEBROCHEN){
             if(ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().size() - 1 > this->m_prozessCounter){
-                qDebug() << "nächster Schritt";
+                //qDebug() << "nächster Schritt";
                     if(ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().at(this->m_prozessCounter + 1).contains("I/O")){
                         ProcessTable::instance()->setProzessZustand(m_prozessPointer, Process::BLOCKIERT);
                 } else {

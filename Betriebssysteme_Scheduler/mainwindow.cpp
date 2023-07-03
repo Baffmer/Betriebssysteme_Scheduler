@@ -482,8 +482,8 @@ void MainWindow::on_pushButtonBeispieleLaden_clicked()
     ProcessTable::instance()->addProcess(Process(0, 0, 16, 64, 3, 3, 3));
     ProcessTable::instance()->addProcess(Process(1, 1, 32, 32, 2, 2, 4));
     ProcessTable::instance()->addProcess(Process(2, 3, 16, 16, 1, 3, 3));
-    //ProcessTable::instance()->addProcess(Process(3, 2, 8, 128, 2, 4, 3));
-    //ProcessTable::instance()->addProcess(Process(4, 3, 16, 64, 1, 1, 4));
+    ProcessTable::instance()->addProcess(Process(3, 2, 8, 128, 5, 2, 10));
+    ProcessTable::instance()->addProcess(Process(4, 3, 16, 64, 5, 5, 7));
     //ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 4, 3, 5));
     //ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 1, 2, 3));
 

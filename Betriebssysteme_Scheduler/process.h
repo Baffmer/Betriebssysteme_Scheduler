@@ -16,6 +16,7 @@ public:
         RECHENBEREIT,
         RECHNEND,
         ABGESCHLOSSEN,
+        ABGEBROCHEN
     };
 
     qint64 prozessorRegister() const;

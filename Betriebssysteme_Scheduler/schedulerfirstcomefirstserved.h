@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QTimer>
+#include <QMessageBox>
 
 #include "processtable.h"
 
@@ -16,12 +17,15 @@ public:
         INIT,
         PROZESS,
         PROZESSWECHSEL,
-        ENDE
+        ENDE,
+        PAUSIERT
     };
 
     SchedulerFirstComeFirstServed();
 
     void handleFirstComeFirstServedSheduling();
+
+    void pauseTimer();
 
 signals:
     void signalUpdateProcessTable(qint64 processPointer, qint64 processCounter);
@@ -41,6 +45,8 @@ private:
     SchedulingStatus m_schedulingStatus = INIT;
     qint64 m_prozessPointer = 0;
     qint64 m_prozessCounter = 0;
+
+    bool m_hasPaused = false;
 };
 
 #endif // SCHEDULERFIRSTCOMEFIRSTSERVED_H

@@ -21,11 +21,14 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
 
     switch(this->m_schedulingStatus){
     case INIT:
-        if(ProcessTable::instance()->processList().at(this->m_prozessPointer).zustand() == Process::RECHENBEREIT){
-            ProcessTable::instance()->setProzessZustand(0, Process::RECHNEND);
-            this->m_schedulingStatus = PROZESS;
-        } else if(ProcessTable::instance()->processList().size() < this->m_prozessPointer){
-            this->m_prozessPointer++;
+        qDebug() << "Anzahl Prozesse" << ProcessTable::instance()->processList().size();
+        if(ProcessTable::instance()->processList().size() > this->m_prozessPointer){ // Existieren Prozesse?
+            if(ProcessTable::instance()->processList().at(this->m_prozessPointer).zustand() == Process::RECHENBEREIT){ // Ist der erste vorhandene Process rechenbereit?
+                //ProcessTable::instance()->setProzessZustand(0, Process::RECHNEND);
+                this->m_schedulingStatus = PROZESS;
+            } else {
+                this->m_prozessPointer++;
+            }
         } else {
             this->m_schedulingStatus = ENDE;
         }
@@ -33,33 +36,47 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
         break;
 
     case PROZESS:
-        if(ProcessTable::instance()->processList().size() > this->m_prozessPointer){
-            if(ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().size()-1 > this->m_prozessCounter){
+
+        if(ProcessTable::instance()->processList().at(this->m_prozessPointer).zustand() != Process::ABGEBROCHEN){
+            if(ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().size() - 1 > this->m_prozessCounter){
                 qDebug() << "nächster Schritt";
+                    if(ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().at(this->m_prozessCounter + 1).contains("I/O")){
+                        ProcessTable::instance()->setProzessZustand(m_prozessPointer, Process::BLOCKIERT);
+                } else {
+                        ProcessTable::instance()->setProzessZustand(m_prozessPointer, Process::RECHNEND);
+                    }
                 this->m_prozessCounter++;
                 m_timer.start(this->m_tick);
             } else {
                 ProcessTable::instance()->setProzessZustand(m_prozessPointer, Process::ABGESCHLOSSEN);
-
                 qDebug() << "nächster Prozess";
                 this->m_prozessCounter = 0;
-                this->m_prozessPointer++;
                 this->m_schedulingStatus = PROZESSWECHSEL;
                 m_timer.start(0);
             }
         } else {
-            this->m_schedulingStatus = ENDE;
+            qDebug() << "nächster Prozess";
+            //this->m_prozessCounter = 0;
+            this->m_schedulingStatus = PROZESSWECHSEL;
             m_timer.start(0);
         }
-
         break;
 
     case PROZESSWECHSEL:
-        if(ProcessTable::instance()->processList().at(this->m_prozessPointer).zustand() == Process::RECHENBEREIT){
-            ProcessTable::instance()->setProzessZustand(m_prozessPointer, Process::RECHNEND);
-            qDebug() << "Prozesswechsel";
-            this->m_schedulingStatus = PROZESS;
-            m_timer.start(ProcessTable::instance()->dauerProzesswechsel()*this->m_tick);
+        if(ProcessTable::instance()->processList().size() - 1 > this->m_prozessPointer){
+            if(ProcessTable::instance()->processList().at(this->m_prozessPointer + 1).zustand() == Process::RECHENBEREIT){
+                //;
+                qDebug() << "Prozesswechsel";
+                this->m_schedulingStatus = PROZESS;
+                m_timer.start(ProcessTable::instance()->dauerProzesswechsel()*this->m_tick);
+            } else {
+                m_timer.start(0);
+            }
+            this->m_prozessCounter = 0;
+            this->m_prozessPointer++;
+        } else {
+            this->m_schedulingStatus = ENDE;
+            m_timer.start(0);
         }
         break;
 
@@ -73,4 +90,10 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
     default:
         break;
     }
+}
+
+void SchedulerFirstComeFirstServed::pauseTimer()
+{
+    m_timer.stop();
+    //m_hasPaused = true;
 }

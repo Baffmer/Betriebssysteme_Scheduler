@@ -44,7 +44,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateProcessTable()
 {
-    qDebug() << "updating Process Table";
+    //qDebug() << "updating Process Table";
+    QList<QTableWidgetSelectionRange> selectedRange;
+    selectedRange = ui->tableWidgetProzesstabelle->selectedRanges();
+
+    qDebug() << selectedRange.size();
 
     int row = 0;
 
@@ -73,6 +77,84 @@ void MainWindow::updateProcessTable()
             zustand = "ABGESCHLOSSEN";
             processColor = Qt::gray;
             break;
+        case Process::ABGEBROCHEN:
+            zustand = "ABGEBROCHEN";
+            processColor = Qt::darkGray;
+            break;
+        default:
+            break;
+        }
+
+        QTableWidgetItem* processItem = new QTableWidgetItem(QString::number(process.PID()), 0);
+        processItem->setTextAlignment(Qt::AlignCenter);
+        processItem->setBackground(processColor);
+        ui->tableWidgetProzesstabelle->setItem(row, 0, processItem);
+
+        QString taetigkeit = "";
+        if(!ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().empty() && row == this->m_prozessPointer){
+            taetigkeit = ProcessTable::instance()->processList().at(this->m_prozessPointer).timeLineList().at(this->m_prozessCounter);
+        }
+        if(zustand.contains("ABGESCHLOSSEN")){
+            taetigkeit = "";
+        }
+        if(zustand.contains("RECHENBEREIT")){
+            taetigkeit = "";
+        }
+        QTableWidgetItem* taetigkeitItem;
+        taetigkeitItem = new QTableWidgetItem(taetigkeit, 0);
+        taetigkeitItem->setTextAlignment(Qt::AlignCenter);
+        taetigkeitItem->setBackground(processColor);
+        ui->tableWidgetProzesstabelle->setItem(row, 2, taetigkeitItem);
+
+        QTableWidgetItem* zustandItem = new QTableWidgetItem(zustand, 0);
+        zustandItem->setTextAlignment(Qt::AlignCenter);
+        zustandItem->setBackground(processColor);
+        ui->tableWidgetProzesstabelle->setItem(row, 1, zustandItem);
+
+        QTableWidgetItem* priorisierungItem = new QTableWidgetItem(QString::number(process.priorisierung()), 0);
+        priorisierungItem->setTextAlignment(Qt::AlignCenter);
+        priorisierungItem->setBackground(processColor);
+        ui->tableWidgetProzesstabelle->setItem(row++, 3, priorisierungItem);
+    }
+
+    if(selectedRange.size() == 1){
+        ui->tableWidgetProzesstabelle->selectRow(selectedRange.at(0).topRow());
+    }
+}
+
+void MainWindow::updateProcessTableCurrentProcess(){
+
+    QList<QTableWidgetSelectionRange> selectedRange;
+    selectedRange = ui->tableWidgetProzesstabelle->selectedRanges();
+
+    qDebug() << selectedRange.size();
+
+    for(Process &process : ProcessTable::instance()->processList()){
+
+        QString zustand;
+        QColor processColor;
+
+        switch (process.zustand()) {
+        case Process::BLOCKIERT:
+            zustand = "BLOCKIERT";
+            processColor = Qt::red;
+            break;
+        case Process::RECHENBEREIT:
+            zustand = "RECHENBEREIT";
+            processColor = Qt::yellow;
+            break;
+        case Process::RECHNEND:
+            zustand = "RECHNEND";
+            processColor = Qt::green;
+            break;
+        case Process::ABGESCHLOSSEN:
+            zustand = "ABGESCHLOSSEN";
+            processColor = Qt::gray;
+            break;
+        case Process::ABGEBROCHEN:
+            zustand = "ABGEBROCHEN";
+            processColor = Qt::darkGray;
+            break;
         default:
             break;
         }
@@ -81,13 +163,7 @@ void MainWindow::updateProcessTable()
         processItem->setTextAlignment(Qt::AlignCenter);
         processItem->setBackground(processColor);
 
-        ui->tableWidgetProzesstabelle->setItem(row, 0, processItem);
-
-        QTableWidgetItem* zustandItem = new QTableWidgetItem(zustand, 0);
-        zustandItem->setTextAlignment(Qt::AlignCenter);
-        zustandItem->setBackground(processColor);
-
-        ui->tableWidgetProzesstabelle->setItem(row, 1, zustandItem);
+        ui->tableWidgetProzesstabelle->setItem(this->m_prozessPointer, 0, processItem);
 
         QString taetigkeit = "";
         QTableWidgetItem* taetigkeitItem;
@@ -102,13 +178,27 @@ void MainWindow::updateProcessTable()
             taetigkeitItem->setTextAlignment(Qt::AlignCenter);
         }
 
-        ui->tableWidgetProzesstabelle->setItem(row, 2, taetigkeitItem);
+        ui->tableWidgetProzesstabelle->setItem(this->m_prozessPointer, 2, taetigkeitItem);
+
+        if(taetigkeit.contains("I/O")){
+            zustand = "BLOCKIERT";
+            processColor = Qt::red;
+        }
+        QTableWidgetItem* zustandItem = new QTableWidgetItem(zustand, 0);
+        zustandItem->setTextAlignment(Qt::AlignCenter);
+        zustandItem->setBackground(processColor);
+
+        ui->tableWidgetProzesstabelle->setItem(this->m_prozessPointer, 1, zustandItem);
 
         QTableWidgetItem* priorisierungItem = new QTableWidgetItem(QString::number(process.priorisierung()), 0);
         priorisierungItem->setTextAlignment(Qt::AlignCenter);
         priorisierungItem->setBackground(processColor);
 
-        ui->tableWidgetProzesstabelle->setItem(row++, 3, priorisierungItem);
+        ui->tableWidgetProzesstabelle->setItem(this->m_prozessPointer, 3, priorisierungItem);
+    }
+
+    if(selectedRange.size() == 1){
+        ui->tableWidgetProzesstabelle->selectRow(selectedRange.at(0).topRow());
     }
 }
 
@@ -219,6 +309,16 @@ void MainWindow::on_pushButtonProzessLoeschen_clicked()
 void MainWindow::on_pushButtonProzessAbbrechen_clicked()
 {
     qDebug() << "Prozess abbrechen Button geklickt";
+
+    qint64 selectedRow = ui->tableWidgetProzesstabelle->currentRow();
+    qint64 PID = ui->tableWidgetProzesstabelle->item(selectedRow, 0)->text().toULongLong();
+
+    Process process = ProcessTable::instance()->getProcessByPID(PID);
+    process.setZustand(Process::ABGEBROCHEN);
+
+    ProcessTable::instance()->updateProcessByPID(PID, process);
+
+    ProcessTable::instance()->printAllProcesses();
 }
 
 
@@ -418,5 +518,34 @@ void MainWindow::updateShedulerInfos(qint64 prozessPointer, qint64 prozessCounte
     this->m_prozessPointer = prozessPointer;
 
     updateProcessTable();
+}
+
+void MainWindow::on_pushButtonSimPausieren_clicked()
+{
+    qDebug() << "Sim-Pausieren Button geklickt";
+
+    switch(this->m_scheduler){
+    case FIRST_COME_FIRST_SERVED:
+        schedulerFirstComeFirstServed->pauseTimer();
+        ui->statusbar->showMessage("Simulation pausiert", 3000);
+        break;
+
+    case SHORTEST_JOB_FIRST:
+        //schedulerFirstComeFirstServed->pauseTimer();
+        ui->statusbar->showMessage("Simulation pausiert", 3000);
+        break;
+
+    case ROUND_ROBIN_SCHEDULING:
+        //schedulerFirstComeFirstServed->pauseTimer();
+        ui->statusbar->showMessage("Simulation pausiert", 3000);
+        break;
+
+    case PRIORITAETSSCHEDULING:
+        //schedulerFirstComeFirstServed->pauseTimer();
+        ui->statusbar->showMessage("Simulation pausiert", 3000);
+            break;
+    default:
+        break;
+    }
 }
 

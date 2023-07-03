@@ -32,6 +32,7 @@ set(PROJECT_SOURCES
         dialogsimparameter.ui
         schedulerfirstcomefirstserved.h
         schedulerfirstcomefirstserved.cpp
+        resources.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

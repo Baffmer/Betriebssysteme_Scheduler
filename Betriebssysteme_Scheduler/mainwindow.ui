@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1099</width>
+    <width>1188</width>
     <height>687</height>
    </rect>
   </property>
@@ -88,7 +88,7 @@
             <number>35</number>
            </attribute>
            <attribute name="horizontalHeaderDefaultSectionSize">
-            <number>125</number>
+            <number>150</number>
            </attribute>
            <attribute name="horizontalHeaderHighlightSections">
             <bool>false</bool>
@@ -131,15 +131,9 @@
              <property name="text">
               <string>Prozess erstellen</string>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonProzessBearbeiten">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Prozess bearbeiten</string>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/plus.png</normaloff>:/plus.png</iconset>
              </property>
             </widget>
            </item>
@@ -151,8 +145,26 @@
              <property name="text">
               <string>Prozess löschen</string>
              </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/trash.png</normaloff>:/trash.png</iconset>
+             </property>
              <property name="checkable">
               <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonProzessBearbeiten">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Prozess bearbeiten</string>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/edit.png</normaloff>:/edit.png</iconset>
              </property>
             </widget>
            </item>
@@ -164,12 +176,20 @@
              <property name="text">
               <string>Prozess abbrechen</string>
              </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/close.png</normaloff>:/close.png</iconset>
+             </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonBeispieleLaden">
              <property name="text">
               <string>Beispiele laden</string>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/upload.png</normaloff>:/upload.png</iconset>
              </property>
             </widget>
            </item>
@@ -345,7 +365,7 @@
                   </size>
                  </property>
                  <property name="text">
-                  <string>                </string>
+                  <string/>
                  </property>
                  <property name="textFormat">
                   <enum>Qt::AutoText</enum>
@@ -406,7 +426,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="text">
-                  <string>                </string>
+                  <string/>
                  </property>
                 </widget>
                </item>
@@ -464,6 +484,10 @@
              <property name="text">
               <string>Simulation starten</string>
              </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/play.png</normaloff>:/play.png</iconset>
+             </property>
             </widget>
            </item>
            <item>
@@ -473,6 +497,10 @@
              </property>
              <property name="text">
               <string>Simulation pausieren</string>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/pause.png</normaloff>:/pause.png</iconset>
              </property>
             </widget>
            </item>
@@ -484,12 +512,20 @@
              <property name="text">
               <string>Simulation abbrechen</string>
              </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/stop.png</normaloff>:/stop.png</iconset>
+             </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonSimEinstellungen">
              <property name="text">
               <string>Sim-Einstellungen</string>
+             </property>
+             <property name="icon">
+              <iconset resource="resources.qrc">
+               <normaloff>:/zahnrad.png</normaloff>:/zahnrad.png</iconset>
              </property>
             </widget>
            </item>
@@ -530,7 +566,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1099</width>
+     <width>1188</width>
      <height>21</height>
     </rect>
    </property>
@@ -585,7 +621,9 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionExit</sender>

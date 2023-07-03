@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>settings.png</file>
+        <file>pause.png</file>
+        <file>stop.png</file>
+        <file>play.png</file>
+        <file>download.png</file>
+        <file>upload.png</file>
+        <file>trash.png</file>
+        <file>edit.png</file>
+        <file>minus.png</file>
+        <file>plus.png</file>
+        <file>close.png</file>
+        <file>zahnrad.png</file>
+    </qresource>
+</RCC>

@@ -34,9 +34,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ProcessTable::instance(), &ProcessTable::processListChanged, this, &MainWindow::updateProcessTable);
     connect(ui->tableWidgetProzesstabelle, &QTableWidget::itemSelectionChanged, this, &MainWindow::updateProcessInformationTable);
     connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
-    connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalShedulingFCFSfinished, this, &MainWindow::shedulingFinishedHandler);
+    connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalShedulingFinished, this, &MainWindow::shedulingFinishedHandler);
+    connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalMessageStatusBar, this, &MainWindow::printMessageStatusBar);
     connect(schedulerRoundRobin, &SchedulerRoundRobin::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
-    connect(schedulerRoundRobin, &SchedulerRoundRobin::signalShedulingFCFSfinished, this, &MainWindow::shedulingFinishedHandler);
+    connect(schedulerRoundRobin, &SchedulerRoundRobin::signalShedulingFinished, this, &MainWindow::shedulingFinishedHandler);
+    connect(schedulerRoundRobin, &SchedulerRoundRobin::signalMessageStatusBar, this, &MainWindow::printMessageStatusBar);
 
     ui->statusbar->showMessage("Willkommen im Scheduler Simulator!", 3000);
 }
@@ -253,7 +255,7 @@ void MainWindow::on_pushButtonProzessAbbrechen_clicked()
 
 qint64 MainWindow::scheduler() const
 {
-    return m_scheduler;
+    return this->m_scheduler;
 }
 
 
@@ -279,7 +281,13 @@ void MainWindow::setScheduler(qint64 newScheduler)
     case PRIORITAETSSCHEDULING:
         ProcessTable::instance()->sortProcessListByPrio();
         ui->statusbar->showMessage("Prioritätsscheduling gewählt.", 3000);
-            break;
+        break;
+
+    case ROUND_ROBIN_SCHEDULING_PRIO:
+        ProcessTable::instance()->sortProcessListByPrio();
+        ui->statusbar->showMessage("Round Robin mit Prio Scheduling gewählt.", 3000);
+        break;
+
     default:
         break;
     }
@@ -374,14 +382,21 @@ void MainWindow::on_pushButtonSimAbbrechen_clicked()
     ui->pushButtonBeispieleLaden->setEnabled(true);
 
     schedulerFirstComeFirstServed->pauseTimer();
+    schedulerRoundRobin->pauseTimer();
 
     ProcessTable::instance()->resetSimulation();
 
     ui->progressBar->setValue(0);
 
     schedulerFirstComeFirstServed->reset();
+    schedulerRoundRobin->reset();
 
     ui->statusbar->showMessage("Simulation abgebrochen.", 3000);
+}
+
+void MainWindow::printMessageStatusBar(QString message, qint64 timeout)
+{
+    ui->statusbar->showMessage(message, 3000);
 }
 
 void MainWindow::on_pushButtonSimStarten_clicked()
@@ -424,7 +439,14 @@ void MainWindow::on_pushButtonSimStarten_clicked()
         //ProcessTable::instance()->sortProcessListByPrio();
         schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
         ui->statusbar->showMessage("Prioritätsscheduling gestartet...", 3000);
-            break;
+        break;
+
+    case ROUND_ROBIN_SCHEDULING_PRIO:
+        //ProcessTable::instance()->sortProcessListByPrio();
+        schedulerRoundRobin->handleRoundRobinSheduling();
+        ui->statusbar->showMessage("Round Robin mit Prio Scheduling gestartet...", 3000);
+        break;
+
     default:
         break;
     }
@@ -468,7 +490,7 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
 
     switch(index){
     case 0:
-        ui->statusbar->showMessage("Fist Come First Served Scheduling ausgewählt.", 3000);
+
         ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
                                                         "<h3>First Come First Served (FCFS) Scheduler (FIFO):</h3>"
                                                         "<p>"
@@ -489,7 +511,7 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
         break;
 
     case 1:
-        ui->statusbar->showMessage("Shortest Job First Scheduling ausgewählt.", 3000);
+
         ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
                                                           "<h3>Shortest Job First (SJF) Scheduler:</h3>"
                                                           "<p>"
@@ -509,7 +531,7 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
         break;
 
     case 2:
-        ui->statusbar->showMessage("Round-Robin-Scheduler ausgewählt.", 3000);
+
         ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
                                                           "<h3>Round-Robin-Scheduler:</h3>"
                                                           "<p>"
@@ -529,7 +551,7 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
         break;
 
     case 3:
-        ui->statusbar->showMessage("Prioritäts-Scheduler ausgewählt.", 3000);
+
         ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
                                                           "<h3>Prioritäts-Scheduler:</h3>"
                                                           "<p>"
@@ -545,6 +567,26 @@ void MainWindow::on_comboBoxActiveProzess_activated(int index)
                                                           "<li>Das Risiko von Starvation (Verhungern) niedrig priorisierter Aufgaben besteht, wenn sie dauerhaft von höher priorisierten Aufgaben verdrängt werden.</li>"
                                                           "<li>Wenn die Prioritäten nicht gut verwaltet werden, kann es zu einer Beeinträchtigung der Performance und Ressourcenausnutzung kommen.</li>"
                                                           "<li>Hohe Komplexität bei der Implementierung und Verwaltung der Prioritätsregeln.</li>"
+                                                          "</ul>")));
+        break;
+
+    case 4:
+
+        ui->textBrowserSchedulerInfos->setHtml(QString (tr(""
+                                                          "<h3>Round-Robin-Scheduler mit Prioritäten:</h3>"
+                                                          "<p>"
+                                                          "<i>Vorteile:</i>"
+                                                          "<ul>"
+                                                          "<li>Fairness bei der Verteilung von Ressourcen und Rechenzeit, da jede Aufgabe in regelmäßigen Zeitintervallen bedient wird.</li>"
+                                                          "<li>Ermöglicht die Priorisierung von Aufgaben basierend auf ihrer Wichtigkeit oder Dringlichkeit.</li>"
+                                                          "<li>Gut geeignet für Szenarien, in denen eine gewisse Ausgewogenheit zwischen Aufgabenprioritäten und Reaktionszeit erforderlich ist.</li>"
+                                                          "</ul>"
+                                                          "<p>"
+                                                          "<i>Nachteile:</i>"
+                                                          "<ul>"
+                                                          "<li>Möglicherweise ineffizient bei langen Aufgaben mit hoher Priorität, da sie in kürzeren Zeitquanten wiederholt unterbrochen werden können.</li>"
+                                                          "<li>Die Wahl des Zeitquantums und der Prioritätsregeln erfordert sorgfältige Abwägungen, um eine optimale Leistung zu erzielen.</li>"
+                                                          "<li>Bei einer schlechten Verwaltung der Prioritäten besteht die Gefahr, dass wichtige Aufgaben durch weniger wichtige Aufgaben verdrängt werden, was zu Starvation führen kann.</li>"
                                                           "</ul>")));
         break;
 

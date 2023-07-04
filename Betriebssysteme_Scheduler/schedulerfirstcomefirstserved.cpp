@@ -67,6 +67,7 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
             if(ProcessTable::instance()->processList().at(this->m_prozessPointer + 1).zustand() == Process::RECHENBEREIT){
                 //;
                 //qDebug() << "Prozesswechsel";
+                emit signalMessageStatusBar("Prozesswechsel", 2000);
                 ProcessTable::instance()->incrementAnzahlProzesswechsel();
                 this->m_schedulingStatus = PROZESS;
                 m_timer.start(ProcessTable::instance()->dauerProzesswechsel()*this->m_tick);
@@ -86,7 +87,7 @@ void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
         this->m_schedulingStatus = INIT;
         this->m_prozessPointer = 0;
         this->m_prozessCounter = 0;
-        emit signalShedulingFCFSfinished(0);
+        emit signalShedulingFinished(0);
         break;
 
     default:

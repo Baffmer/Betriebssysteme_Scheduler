@@ -32,7 +32,8 @@ public:
 
 signals:
     void signalUpdateProcessTable(qint64 processPointer, qint64 processCounter);
-    void signalShedulingFCFSfinished(qint64 sheduler);
+    void signalShedulingFinished(qint64 sheduler);
+    void signalMessageStatusBar(QString message, qint64 timeout);
 
 private slots:
     void timerEvent() {

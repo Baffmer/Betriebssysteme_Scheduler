@@ -334,6 +334,11 @@
                  <string>Prioritätsscheduling</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>Round Robin Scheduling Prio</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>

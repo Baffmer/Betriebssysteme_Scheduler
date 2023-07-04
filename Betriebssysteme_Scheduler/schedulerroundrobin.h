@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QTimer>
+#include <QList>
 
 #include "processtable.h"
 
@@ -32,12 +33,13 @@ public:
 
 signals:
     void signalUpdateProcessTable(qint64 processPointer, qint64 processCounter);
-    void signalShedulingFCFSfinished(qint64 sheduler);
+    void signalShedulingFinished(qint64 sheduler);
+    void signalMessageStatusBar(QString message, qint64 timeout);
 
 private slots:
     void timerEvent() {
         handleRoundRobinSheduling();
-        emit signalUpdateProcessTable(this->m_prozessPointer, this->m_prozessCounter);
+        emit signalUpdateProcessTable(this->m_prozessPointer, this->m_prozessCounterList.at(this->m_prozessPointer));
     };
 
 private:
@@ -49,6 +51,14 @@ private:
     SchedulingStatus m_schedulingStatus = INIT;
     qint64 m_prozessPointer = 0;
     qint64 m_prozessCounter = 0;
+
+    // RoundRobin Quantum
+    qint64 m_quantumCounter = 0;
+    QList<qint64> m_prozessCounterList;
+
+    qint64 m_processesFinishedCounter = 0;
+
+    void incrementProcessCounterAt(qint64 pos);
 };
 
 #endif // SCHEDULERROUNDROBIN_H

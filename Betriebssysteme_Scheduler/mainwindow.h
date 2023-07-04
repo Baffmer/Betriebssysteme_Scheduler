@@ -29,7 +29,8 @@ public:
         FIRST_COME_FIRST_SERVED,
         SHORTEST_JOB_FIRST,
         ROUND_ROBIN_SCHEDULING,
-        PRIORITAETSSCHEDULING
+        PRIORITAETSSCHEDULING,
+        ROUND_ROBIN_SCHEDULING_PRIO
     };
 
     MainWindow(QWidget *parent = nullptr);
@@ -68,6 +69,8 @@ private slots:
     void shedulingFinishedHandler(qint64 sheduler);
 
     void on_pushButtonSimAbbrechen_clicked();
+
+    void printMessageStatusBar(QString message, qint64 timeout);
 
 private:
     Ui::MainWindow *ui;

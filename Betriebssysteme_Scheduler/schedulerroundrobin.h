@@ -1,5 +1,5 @@
-#ifndef SCHEDULERFIRSTCOMEFIRSTSERVED_H
-#define SCHEDULERFIRSTCOMEFIRSTSERVED_H
+#ifndef SCHEDULERROUNDROBIN_H
+#define SCHEDULERROUNDROBIN_H
 
 #include <QObject>
 #include <QDebug>
@@ -7,7 +7,7 @@
 
 #include "processtable.h"
 
-class SchedulerFirstComeFirstServed : public QObject
+class SchedulerRoundRobin : public QObject
 {
     Q_OBJECT
 public:
@@ -20,9 +20,9 @@ public:
         PAUSIERT
     };
 
-    SchedulerFirstComeFirstServed();
+    SchedulerRoundRobin();
 
-    void handleFirstComeFirstServedSheduling();
+    void handleRoundRobinSheduling();
 
     void pauseTimer();
 
@@ -36,7 +36,7 @@ signals:
 
 private slots:
     void timerEvent() {
-        handleFirstComeFirstServedSheduling();
+        handleRoundRobinSheduling();
         emit signalUpdateProcessTable(this->m_prozessPointer, this->m_prozessCounter);
     };
 
@@ -51,4 +51,4 @@ private:
     qint64 m_prozessCounter = 0;
 };
 
-#endif // SCHEDULERFIRSTCOMEFIRSTSERVED_H
+#endif // SCHEDULERROUNDROBIN_H

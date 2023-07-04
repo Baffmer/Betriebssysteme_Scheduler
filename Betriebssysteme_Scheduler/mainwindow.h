@@ -13,6 +13,7 @@
 #include "dialogsimparameter.h"
 
 #include "schedulerfirstcomefirstserved.h"
+#include "schedulerroundrobin.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -78,6 +79,7 @@ private:
 
     // Scheduler
     SchedulerFirstComeFirstServed* schedulerFirstComeFirstServed;
+    SchedulerRoundRobin* schedulerRoundRobin;
 
     // Timer
     QElapsedTimer m_timer;

@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Scheduler
 
     schedulerFirstComeFirstServed = new SchedulerFirstComeFirstServed;
+    schedulerRoundRobin = new SchedulerRoundRobin;
 
     // Connections
 
@@ -34,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->tableWidgetProzesstabelle, &QTableWidget::itemSelectionChanged, this, &MainWindow::updateProcessInformationTable);
     connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
     connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalShedulingFCFSfinished, this, &MainWindow::shedulingFinishedHandler);
+    connect(schedulerRoundRobin, &SchedulerRoundRobin::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
+    connect(schedulerRoundRobin, &SchedulerRoundRobin::signalShedulingFCFSfinished, this, &MainWindow::shedulingFinishedHandler);
 
     ui->statusbar->showMessage("Willkommen im Scheduler Simulator!", 3000);
 }
@@ -43,6 +46,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete schedulerFirstComeFirstServed;
+    delete schedulerRoundRobin;
 }
 
 
@@ -255,13 +259,37 @@ qint64 MainWindow::scheduler() const
 
 void MainWindow::setScheduler(qint64 newScheduler)
 {
-    m_scheduler = newScheduler;
+    this->m_scheduler = newScheduler;
+
+    switch(this->m_scheduler){
+    case FIRST_COME_FIRST_SERVED:
+        ProcessTable::instance()->sortProcessListByPID();
+        ui->statusbar->showMessage("Fist Come First Served Scheduling gewählt.", 3000);
+        break;
+
+    case SHORTEST_JOB_FIRST:
+        ProcessTable::instance()->sortProcessListByTime();
+        ui->statusbar->showMessage("Shortest Job First Scheduling gewählt.", 3000);
+        break;
+
+    case ROUND_ROBIN_SCHEDULING:
+        ui->statusbar->showMessage("Round Robin Scheduling gewählt.", 3000);
+        break;
+
+    case PRIORITAETSSCHEDULING:
+        ProcessTable::instance()->sortProcessListByPrio();
+        ui->statusbar->showMessage("Prioritätsscheduling gewählt.", 3000);
+            break;
+    default:
+        break;
+    }
 }
 
 
 void MainWindow::on_pushButtonBeispieleLaden_clicked()
 {
     qDebug() << "Beispiele laden Button geklickt";
+    on_pushButtonSimAbbrechen_clicked();
 
     ProcessTable::instance()->removeAllProcesses();
     ui->tableWidgetProzessinformationen->clearContents();
@@ -343,6 +371,7 @@ void MainWindow::on_pushButtonSimAbbrechen_clicked()
     ui->pushButtonSimStarten->setEnabled(true);
     ui->pushButtonSimAbbrechen->setEnabled(false);
     ui->pushButtonSimPausieren->setEnabled(false);
+    ui->pushButtonBeispieleLaden->setEnabled(true);
 
     schedulerFirstComeFirstServed->pauseTimer();
 
@@ -361,6 +390,7 @@ void MainWindow::on_pushButtonSimStarten_clicked()
     ui->pushButtonSimStarten->setEnabled(false);
     ui->pushButtonSimAbbrechen->setEnabled(true);
     ui->pushButtonSimPausieren->setEnabled(true);
+    ui->pushButtonBeispieleLaden->setEnabled(false);
 
     // Anzahl Prozesswechsel zurücksetzen
     ProcessTable::instance()->resetAnzahlProzesswechsel();
@@ -374,31 +404,30 @@ void MainWindow::on_pushButtonSimStarten_clicked()
 
     switch(this->m_scheduler){
     case FIRST_COME_FIRST_SERVED:
-        ProcessTable::instance()->sortProcessListByPID();
+        //ProcessTable::instance()->sortProcessListByPID();
         schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
         ui->statusbar->showMessage("Fist Come First Served Scheduling gestartet...", 3000);
         break;
 
     case SHORTEST_JOB_FIRST:
-        ProcessTable::instance()->sortProcessListByTime();
+        //ProcessTable::instance()->sortProcessListByTime();
         schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
         ui->statusbar->showMessage("Shortest Job First Scheduling gestartet...", 3000);
         break;
 
     case ROUND_ROBIN_SCHEDULING:
-        //schedulerFirstComeFirstServed->startFirstComeFirstServedSheduling();
+        schedulerRoundRobin->handleRoundRobinSheduling();
         ui->statusbar->showMessage("Round Robin Scheduling gestartet...", 3000);
         break;
 
     case PRIORITAETSSCHEDULING:
-        ProcessTable::instance()->sortProcessListByPrio();
+        //ProcessTable::instance()->sortProcessListByPrio();
         schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
         ui->statusbar->showMessage("Prioritätsscheduling gestartet...", 3000);
             break;
     default:
         break;
     }
-
 }
 
 void MainWindow::on_pushButtonSimPausieren_clicked()
@@ -407,32 +436,12 @@ void MainWindow::on_pushButtonSimPausieren_clicked()
     ui->pushButtonSimStarten->setEnabled(true);
     ui->pushButtonSimAbbrechen->setEnabled(true);
     ui->pushButtonSimPausieren->setEnabled(false);
+    ui->pushButtonBeispieleLaden->setEnabled(false);
 
     this->m_elapsedTime += this->m_timer.elapsed();
+    schedulerFirstComeFirstServed->pauseTimer();
 
-    switch(this->m_scheduler){
-    case FIRST_COME_FIRST_SERVED:
-        schedulerFirstComeFirstServed->pauseTimer();
-        ui->statusbar->showMessage("Simulation pausiert", 3000);
-        break;
-
-    case SHORTEST_JOB_FIRST:
-        //schedulerFirstComeFirstServed->pauseTimer();
-        ui->statusbar->showMessage("Simulation pausiert", 3000);
-        break;
-
-    case ROUND_ROBIN_SCHEDULING:
-        //schedulerFirstComeFirstServed->pauseTimer();
-        ui->statusbar->showMessage("Simulation pausiert", 3000);
-        break;
-
-    case PRIORITAETSSCHEDULING:
-        //schedulerFirstComeFirstServed->pauseTimer();
-        ui->statusbar->showMessage("Simulation pausiert", 3000);
-            break;
-    default:
-        break;
-    } 
+    ui->statusbar->showMessage("Simulation pausiert", 3000);
 }
 
 void MainWindow::shedulingFinishedHandler(qint64 sheduler)
@@ -440,36 +449,15 @@ void MainWindow::shedulingFinishedHandler(qint64 sheduler)
     ui->pushButtonSimStarten->setEnabled(true);
     ui->pushButtonSimAbbrechen->setEnabled(false);
     ui->pushButtonSimPausieren->setEnabled(false);
+    ui->pushButtonBeispieleLaden->setEnabled(true);
 
     // Evaluation
     ui->labelSimZeitOut->setText(QString::number((this->m_elapsedTime + this->m_timer.elapsed())/1000.0) + "s");
     ui->labelProzesswechselOut->setText(QString::number(ProcessTable::instance()->getAnzahlProzesswechsel()));
 
     this->m_elapsedTime = 0;
-
-    switch(sheduler){
-    case FIRST_COME_FIRST_SERVED:
-        ui->progressBar->setValue(10000);
-        ui->statusbar->showMessage("Simulation beendet", 3000);
-        break;
-
-    case SHORTEST_JOB_FIRST:
-        ui->progressBar->setValue(10000);
-        ui->statusbar->showMessage("Simulation beendet", 3000);
-        break;
-
-    case ROUND_ROBIN_SCHEDULING:
-        ui->progressBar->setValue(10000);
-        ui->statusbar->showMessage("Simulation beendet", 3000);
-        break;
-
-    case PRIORITAETSSCHEDULING:
-        ui->progressBar->setValue(10000);
-        ui->statusbar->showMessage("Simulation beendet", 3000);
-        break;
-    default:
-        break;
-    }
+    ui->progressBar->setValue(10000);
+    ui->statusbar->showMessage("Simulation beendet", 3000);
 }
 
 void MainWindow::on_comboBoxActiveProzess_activated(int index)

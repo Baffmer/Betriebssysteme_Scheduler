@@ -158,7 +158,7 @@ void ProcessTable::printAllProcesses()
 
 void ProcessTable::emitProcessTableUpdate()
 {
-    emit processListChanged();
+    emit signalProcessListChanged();
 }
 
 qint64 ProcessTable::dauerProzesswechsel() const
@@ -217,6 +217,7 @@ qint64 ProcessTable::getAnzahlProzesswechsel()
 void ProcessTable::resetSimulation()
 {
     this->m_anzahlProzesswechsel = 0;
+    this->m_simulationsdauer = 0;
 
     for(Process &process : this->m_processList){
         process.setZustand(Process::RECHENBEREIT);

@@ -1,18 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-/**
- * @brief MainWindow::MainWindow
- * @param parent
- *
- * Konstruktor für die MainWindow Klasse
- * -# Setzt die ComboBox für den Scheduler initial
- * -# Deaktiviert die NativeMenuBar auf dem MAC
- * -# Setzt das Maximum (10000) und das Minimum (0) der ProgressBar
- * -# Instanzen für die Scheduler werden angelegt
- * -# Connections werden definiert
- *
- */
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -44,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Connections
 
-    connect(ProcessTable::instance(), &ProcessTable::processListChanged, this, &MainWindow::updateProcessTable);
+    connect(ProcessTable::instance(), &ProcessTable::signalProcessListChanged, this, &MainWindow::updateProcessTable);
     connect(ui->tableWidgetProzesstabelle, &QTableWidget::itemSelectionChanged, this, &MainWindow::updateProcessInformationTable);
     connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
     connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalShedulingFinished, this, &MainWindow::shedulingFinishedHandler);
@@ -56,11 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->statusbar->showMessage("Willkommen im Scheduler Simulator!", 3000);
 }
 
-/**
- * @brief MainWindow::~MainWindow
- *
- * Destruktor für die MainWindow Klasse
- */
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -68,17 +53,7 @@ MainWindow::~MainWindow()
     delete schedulerRoundRobin;
 }
 
-/**
- * @brief MainWindow::updateProcessTable
- *
- * Diese Methode aktualisiert die Tabelle mit den Prozessen
- * -# Dafür werden die Prozesse aus der ProzessListe des Sigletons ProcessTable verwendet
- * -# Darüber hinaus werden die Variablen m_processCounter (für den aktuellen Thread) und m_processPointer (für den aktuellen Prozess) verwendet
- * -# Hier werden dann die Hintergrundfarben rot (I/O), grün (rechnend), geld (rechenbereit), grau (abgeschlossen), dunkelgrau (abgebrochen) gesetzt
- * -# die Tätigkeit des aktuellen Prozesses wird gesetzt
- * -# die Zustände aller Prozesse sind immer sichtbar
- * -# zusätzlich bleibt die ausgewählte Zeile immer angewählt
- */
+
 void MainWindow::updateProcessTable()
 {
     //qDebug() << "updating Process Table";
@@ -157,15 +132,7 @@ void MainWindow::updateProcessTable()
     }
 }
 
-/**
- * @brief MainWindow::updateProcessInformationTable
- *
- * -# Buttons für Prozesse aktivieren, wenn mindestens ein Prozess in der Liste ist
- * -# Speichern der aktuellen selektierten Zeile und neues setzen beim Beenden der Methode
- * -# Setzen der Prozesseigenschaften in der Tabelle ProcessInformationTable
- * -# PID, priorisierung, prozessorRegister (Platzhalter), hauptspeicher (Platzhalter), anzahlEinAusgabe, anzahlThreads, dauerThreads
- *
- */
+
 void MainWindow::updateProcessInformationTable()
 {
     //qDebug() << "updating Process Information Table";
@@ -219,14 +186,7 @@ void MainWindow::updateProcessInformationTable()
     ui->tableWidgetProzessinformationen->setItem(0, 4, dauerThreadsItem);
 }
 
-/**
- * @brief MainWindow::on_pushButtonProzessErstellen_clicked
- *
- * Callback für den Button "Prozess erstellen"
- * Ruft das Eingabefenster "Prozess erstellen" auf und setzt anschließend die Werte:\n
- * PID, priorisierung, prozessorRegister, hauptspeicher, anzahlEinAusgabe, anzahlThreads, dauerThreads
- *
- */
+
 void MainWindow::on_pushButtonProzessErstellen_clicked()
 {
     DialogProzessErstellen prozessErstellen(this, ProcessTable::instance()->sizeProcessList());
@@ -240,14 +200,7 @@ void MainWindow::on_pushButtonProzessErstellen_clicked()
     ui->statusbar->showMessage("neuer Prozess wurde erstellt", 3000);
 }
 
-/**
- * @brief MainWindow::on_pushButtonProzessBearbeiten_clicked
- *
- * Callback für den Prozess Bearbeiten Button.
- * -# Öffnet das Fenster "Prozess bearbeiten" mit den Werten des markierten Prozesses.
- * -# Anschließend können diese bearbeitet und dann gespeichert werden.
- * -# Deaktiviert Prozess-Manipulation-Buttons, da die Auswahl verschwindet.
- */
+
 void MainWindow::on_pushButtonProzessBearbeiten_clicked()
 {
     qDebug() << "Prozess bearbeiten Button geklickt";
@@ -271,13 +224,7 @@ void MainWindow::on_pushButtonProzessBearbeiten_clicked()
     ui->pushButtonProzessLoeschen->setEnabled(false);
 }
 
-/**
- * @brief MainWindow::on_pushButtonProzessLoeschen_clicked
- *
- * -# Entfernt den markierten Prozess aus der processList und der Prozess Tabelle.
- * -# Deaktiviert Prozess-Manipulation-Buttons, da die Auswahl verschwindet.
- *
- */
+
 void MainWindow::on_pushButtonProzessLoeschen_clicked()
 {
     qDebug() << "Prozess löschen Button geklickt";
@@ -297,13 +244,7 @@ void MainWindow::on_pushButtonProzessLoeschen_clicked()
     ui->pushButtonProzessLoeschen->setEnabled(false);
 }
 
-/**
- * @brief MainWindow::on_pushButtonProzessAbbrechen_clicked
- *
- * -# Setzt den Zustand des markierten Prozesses auf ABGEBROCHEN.
- * -# Deaktiviert Prozess-Manipulation-Buttons, da die Auswahl verschwindet.
- *
- */
+
 void MainWindow::on_pushButtonProzessAbbrechen_clicked()
 {
     qDebug() << "Prozess abbrechen Button geklickt";
@@ -319,27 +260,13 @@ void MainWindow::on_pushButtonProzessAbbrechen_clicked()
     ProcessTable::instance()->printAllProcesses();
 }
 
-/**
- * @brief MainWindow::scheduler
- * @return m_scheduler
- *
- * Getter für die Variable m_scheduler
- *
- */
+
 qint64 MainWindow::scheduler() const
 {
     return this->m_scheduler;
 }
 
-/**
- * @brief MainWindow::setScheduler
- * @param newScheduler
- *
- * Setter für die Variable m_scheduler
- * -# Setzt den ausgewählten Scheduler vom Dropdown Menü in der Varaible m_scheduler.
- * -# Falls für den Scheduler die processList sortiert werden muss, wird dieses hier schon gemacht, um den Nutzer visuell dies zeigen zu können.
- *
- */
+
 void MainWindow::setScheduler(qint64 newScheduler)
 {
     this->m_scheduler = newScheduler;
@@ -374,12 +301,7 @@ void MainWindow::setScheduler(qint64 newScheduler)
     }
 }
 
-/**
- * @brief MainWindow::on_pushButtonBeispieleLaden_clicked
- *
- * Diese Methode lädt diverse Beispiele, damit zu Demonstrationszwecken schnell Prozesse geladen werden können.
- *
- */
+
 void MainWindow::on_pushButtonBeispieleLaden_clicked()
 {
     qDebug() << "Beispiele laden Button geklickt";
@@ -402,12 +324,7 @@ void MainWindow::on_pushButtonBeispieleLaden_clicked()
     ui->statusbar->showMessage("Beispiele geladen.", 3000);
 }
 
-/**
- * @brief MainWindow::on_action_ber_triggered
- *
- * Öffnet ein Fenster mit Informationen über das Projekt, einen Git-Link und den Entwicklern.
- *
- */
+
 void MainWindow::on_action_ber_triggered()
 {
     qDebug() << "Über Button geklickt";
@@ -416,12 +333,7 @@ void MainWindow::on_action_ber_triggered()
     infoFenster.exec();
 }
 
-/**
- * @brief MainWindow::on_actionDoku_triggered
- *
- * Öffnet den Standardbrowser zum Git-Repository auf GitHub
- *
- */
+
 void MainWindow::on_actionDoku_triggered()
 {
     qDebug() << "Hilfe Button geklickt";
@@ -430,18 +342,7 @@ void MainWindow::on_actionDoku_triggered()
     QDesktopServices::openUrl(QUrl(link));
 }
 
-/**
- * @brief MainWindow::on_pushButtonSimEinstellungen_clicked
- *
- * Öffnet ein Fenster zum Einstellen folgender Simulationsparameter:
- * -# I/O Dauer
- * -# Zeit Quantum für Round Robin
- * -# Simulationsgeschwindigkeit (langsam, normal, schnell)
- * -# Dauer für einen Prozesswechsel
- *
- * Startet den Prozess zum Erstellen der TimeLines der Prozesse
- *
- */
+
 void MainWindow::on_pushButtonSimEinstellungen_clicked()
 {
     qDebug() << "Sim-Einstellungen Button geklickt";
@@ -465,14 +366,7 @@ void MainWindow::on_pushButtonSimEinstellungen_clicked()
     }
 }
 
-/**
- * @brief MainWindow::updateShedulerInfos
- * @param prozessPointer
- * @param prozessCounter
- *
- * Slot für die Variablen m_prozessCounter und m_prozessPointer. Der Slot wird von den Schedulern aufgerufen, um die Prozesstabelle aktualisieren zu können.
- *
- */
+
 void MainWindow::updateShedulerInfos(qint64 prozessPointer, qint64 prozessCounter)
 {
     this->m_prozessCounter = prozessCounter;
@@ -486,12 +380,7 @@ void MainWindow::updateShedulerInfos(qint64 prozessPointer, qint64 prozessCounte
 }
 
 
-/**
- * @brief MainWindow::on_pushButtonSimAbbrechen_clicked
- *
- * Button zum Abbrechen der laufenden Simulation, setzt alle Werte die wichtig für den Start einer Simulation sind auf Startparameter zurück.
- *
- */
+
 void MainWindow::on_pushButtonSimAbbrechen_clicked()
 {
     qDebug() << "Sim-Abbrechen Button geklickt";
@@ -516,29 +405,13 @@ void MainWindow::on_pushButtonSimAbbrechen_clicked()
     ui->statusbar->showMessage("Simulation abgebrochen.", 3000);
 }
 
-/**
- * @brief MainWindow::printMessageStatusBar
- * @param message
- * @param timeout
- *
- * Slot für Meldungen in der Statusbar. Dieser Slot wird von den Schedulern verwendet, um Meldungen in der Statsubar anzeigen zu können.
- *
- */
+
 void MainWindow::printMessageStatusBar(QString message, qint64 timeout)
 {
     ui->statusbar->showMessage(message, 3000);
 }
 
-/**
- * @brief MainWindow::on_pushButtonSimStarten_clicked
- *
- * Callback für den Button "Simulation starten".
- * -# Startet die entsprechende Simulation, welche im Scheduler Dropdown Menü ausgewählt wurde
- * -# Blockiert die Buttons: Simualtion starten, Beispiele laden
- * -# Startet den QTimer zum Messen der Simulationsdauer
- * -# Setzt die ProgressBar zurück, wenn die vorherige Simulatino beendet wwurde
- *
- */
+
 void MainWindow::on_pushButtonSimStarten_clicked()
 {
     qDebug() << "Simulation starten Button geklickt";
@@ -593,14 +466,7 @@ void MainWindow::on_pushButtonSimStarten_clicked()
 }
 
 
-/**
- * @brief MainWindow::on_pushButtonSimPausieren_clicked
- *
- * Callback für den Button "Simulation pausieren"
- * -# Buttons: Simulation pausieren und Beispiele laden werden deaktiviert
- * -# Zwischenergebnis der Zeitmessung wird in der Variablen m_elapsedTime gespeichert
- *
- */
+
 void MainWindow::on_pushButtonSimPausieren_clicked()
 {
     qDebug() << "Sim-Pausieren Button geklickt";
@@ -615,17 +481,7 @@ void MainWindow::on_pushButtonSimPausieren_clicked()
     ui->statusbar->showMessage("Simulation pausiert", 3000);
 }
 
-/**
- * @brief MainWindow::shedulingFinishedHandler
- * @param sheduler
- *
- * Slot für die Scheduler, welcher aufgerufen wird wenn die Simualtion beendet wurde.
- * -# gibt die Buttons Simulation starten und Beispiele laden wieder frei und sperrt die Buttons Simualtion Abbrechen/Pausieren
- * -# Setzt die Simulationszeit zusammen und gibt diese aus, setzt diese anschließend zurück
- * -# Gibt die Anzahl der Prozesswechsel aus
- * -# Setzt die ProgressBar auf 100%
- *
- */
+
 void MainWindow::shedulingFinishedHandler(qint64 sheduler)
 {
     ui->pushButtonSimStarten->setEnabled(true);
@@ -642,14 +498,7 @@ void MainWindow::shedulingFinishedHandler(qint64 sheduler)
     ui->statusbar->showMessage("Simulation beendet", 3000);
 }
 
-/**
- * @brief MainWindow::on_comboBoxActiveProzess_activated
- * @param index
- *
- * Slot für die Combo Box, wenn ein Scheduler gewählt wurde.
- * -# Gibt Informationen (Vor- u. Nachteile) zu den gewählten Schedulern aus
- * -# Speichert den ausgewählten Scheduler in der Variable m_scheduler
- */
+
 void MainWindow::on_comboBoxActiveProzess_activated(int index)
 {
     qDebug() << "Scheduler:" << index << "ausgewählt";

@@ -270,7 +270,7 @@
              <row/>
              <column>
               <property name="text">
-               <string>ProzReg</string>
+               <string>Proz. Reg.</string>
               </property>
              </column>
              <column>
@@ -280,7 +280,7 @@
              </column>
              <column>
               <property name="text">
-               <string>#E/A</string>
+               <string>Anzahl E/A</string>
               </property>
              </column>
              <column>

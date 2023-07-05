@@ -243,7 +243,7 @@ private:
     // Sim Parameter
     qint64 m_quantum = 10; ///< Zeit Quantum für den Round Robin Scheduler
     qint64 m_ioDauer = 2; ///< Zeitdauer einer Ein- bzw. Ausgabeoperation
-    qint64 m_simSpeed = 1; ///< Simulationsgeschwindigkeit 0=langsam, 1=normal, 2=schnell
+    qint64 m_simSpeed = 1; ///< Simulationsgeschwindigkeit (0=langsam, 1=normal, 2=schnell)
     qint64 m_dauerProzesswechsel = 5; ///< Zeitdauer eines Prozesswechsels
 
     qint64 m_simTimeSlotsSum = 0; ///< Summe aller Zeitslots der Zeitstrahlen in der m_processList (benötigt für die ProgressBar)

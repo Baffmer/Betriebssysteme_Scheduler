@@ -32,6 +32,10 @@ Makefile*
 *.qm
 *.prl
 
+# Doxygen
+/html
+/Doxyfile
+
 # Qt unit tests
 target_wrapper.*
 

@@ -1,21 +1,6 @@
 #include "schedulerfirstcomefirstserved.h"
 
-SchedulerFirstComeFirstServed::SchedulerFirstComeFirstServed()
-{
-    connect(&m_timer, SIGNAL(timeout()), this, SLOT(timerEvent()));
-
-    if(ProcessTable::instance()->simSpeed() == 0){
-        this->m_tick = 500;
-    } else if (ProcessTable::instance()->simSpeed() == 1) {
-        this->m_tick = 250;
-    } else {
-        this->m_tick = 100;
-    }
-
-    m_timer.setSingleShot(true);
-}
-
-void SchedulerFirstComeFirstServed::handleFirstComeFirstServedSheduling()
+void SchedulerFirstComeFirstServed::handleSheduling()
 {
     // State Machine
 

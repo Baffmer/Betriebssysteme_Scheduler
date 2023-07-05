@@ -1,34 +1,34 @@
 #ifndef SCHEDULERFIRSTCOMEFIRSTSERVED_H
 #define SCHEDULERFIRSTCOMEFIRSTSERVED_H
 
-#include <QObject>
-#include <QDebug>
-#include <QTimer>
+#include "scheduler.h"
 
-#include "processtable.h"
-
-class SchedulerFirstComeFirstServed : public QObject
+class SchedulerFirstComeFirstServed : public Scheduler
 {
     Q_OBJECT
 public:
 
-    enum SchedulingStatus{
-        INIT,
-        PROZESS,
-        PROZESSWECHSEL,
-        ENDE,
-        PAUSIERT
-    };
+    SchedulerFirstComeFirstServed() : Scheduler(){
+        connect(&m_timer, SIGNAL(timeout()), this, SLOT(timerEvent()));
 
-    SchedulerFirstComeFirstServed();
+        if(ProcessTable::instance()->simSpeed() == 0){
+            this->m_tick = 500;
+        } else if (ProcessTable::instance()->simSpeed() == 1) {
+            this->m_tick = 250;
+        } else {
+            this->m_tick = 100;
+        }
 
-    void handleFirstComeFirstServedSheduling();
+        m_timer.setSingleShot(true);
+    }
 
-    void pauseTimer();
+    virtual void handleSheduling();
 
-    void reset();
+    virtual void pauseTimer();
 
-    void setSimSpeed(qint64 value);
+    virtual void reset();
+
+    virtual void setSimSpeed(qint64 value);
 
 signals:
     void signalUpdateProcessTable(qint64 processPointer, qint64 processCounter);
@@ -36,20 +36,10 @@ signals:
     void signalMessageStatusBar(QString message, qint64 timeout);
 
 private slots:
-    void timerEvent() {
-        handleFirstComeFirstServedSheduling();
+    virtual void timerEvent() {
+        handleSheduling();
         emit signalUpdateProcessTable(this->m_prozessPointer, this->m_prozessCounter);
     };
-
-private:
-    QTimer m_timer;
-
-    // Simulationsgeschwindigkeit
-    qint64 m_tick = 250; // normal
-
-    SchedulingStatus m_schedulingStatus = INIT;
-    qint64 m_prozessPointer = 0;
-    qint64 m_prozessCounter = 0;
 };
 
 #endif // SCHEDULERFIRSTCOMEFIRSTSERVED_H

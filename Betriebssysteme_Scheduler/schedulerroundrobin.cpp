@@ -1,21 +1,6 @@
 #include "schedulerroundrobin.h"
 
-SchedulerRoundRobin::SchedulerRoundRobin()
-{
-    connect(&m_timer, SIGNAL(timeout()), this, SLOT(timerEvent()));
-
-    if(ProcessTable::instance()->simSpeed() == 0){
-        this->m_tick = 500;
-    } else if (ProcessTable::instance()->simSpeed() == 1) {
-        this->m_tick = 250;
-    } else {
-        this->m_tick = 100;
-    }
-
-    m_timer.setSingleShot(true);
-}
-
-void SchedulerRoundRobin::handleRoundRobinSheduling()
+void SchedulerRoundRobin::handleSheduling()
 {
     // init prozess counter list
     if(this->m_prozessCounterList.empty()){

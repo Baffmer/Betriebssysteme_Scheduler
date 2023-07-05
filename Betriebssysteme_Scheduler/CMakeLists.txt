@@ -30,6 +30,8 @@ set(PROJECT_SOURCES
         dialogsimparameter.h
         dialogsimparameter.cpp
         dialogsimparameter.ui
+        scheduler.h
+        scheduler.cpp
         schedulerfirstcomefirstserved.h
         schedulerfirstcomefirstserved.cpp
         schedulerroundrobin.h

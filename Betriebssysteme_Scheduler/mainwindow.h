@@ -12,6 +12,7 @@
 #include "dialogueberinformationen.h"
 #include "dialogsimparameter.h"
 
+#include "scheduler.h"
 #include "schedulerfirstcomefirstserved.h"
 #include "schedulerroundrobin.h"
 
@@ -264,8 +265,8 @@ private:
     qint64 m_prozessCounter = 0; ///< Enthält den Index, welche Tätigkeit im Zeitstrahl bearbeitet wird
 
     // Scheduler
-    SchedulerFirstComeFirstServed* schedulerFirstComeFirstServed; ///< Instanz für die Scheduler: FCFS, Shortest First, Prio First
-    SchedulerRoundRobin* schedulerRoundRobin; ///< Instanz für die Scheduler Round Roben mit und ohne Priorität
+    SchedulerFirstComeFirstServed* m_schedulerFirstComeFirstServed; ///< Instanz für die Scheduler: FCFS, Shortest First, Prio First
+    SchedulerRoundRobin* m_schedulerRoundRobin; ///< Instanz für die Scheduler Round Roben mit und ohne Priorität
 
     // Timer
     QElapsedTimer m_timer; ///< Objekt zum Messen der Simulationsdauer

@@ -28,19 +28,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Scheduler
 
-    schedulerFirstComeFirstServed = new SchedulerFirstComeFirstServed;
-    schedulerRoundRobin = new SchedulerRoundRobin;
+    m_schedulerFirstComeFirstServed = new SchedulerFirstComeFirstServed;
+    m_schedulerRoundRobin = new SchedulerRoundRobin;
 
     // Connections
 
     connect(ProcessTable::instance(), &ProcessTable::signalProcessListChanged, this, &MainWindow::updateProcessTable);
     connect(ui->tableWidgetProzesstabelle, &QTableWidget::itemSelectionChanged, this, &MainWindow::updateProcessInformationTable);
-    connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
-    connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalShedulingFinished, this, &MainWindow::shedulingFinishedHandler);
-    connect(schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalMessageStatusBar, this, &MainWindow::printMessageStatusBar);
-    connect(schedulerRoundRobin, &SchedulerRoundRobin::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
-    connect(schedulerRoundRobin, &SchedulerRoundRobin::signalShedulingFinished, this, &MainWindow::shedulingFinishedHandler);
-    connect(schedulerRoundRobin, &SchedulerRoundRobin::signalMessageStatusBar, this, &MainWindow::printMessageStatusBar);
+    connect(m_schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
+    connect(m_schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalShedulingFinished, this, &MainWindow::shedulingFinishedHandler);
+    connect(m_schedulerFirstComeFirstServed, &SchedulerFirstComeFirstServed::signalMessageStatusBar, this, &MainWindow::printMessageStatusBar);
+    connect(m_schedulerRoundRobin, &SchedulerRoundRobin::signalUpdateProcessTable, this, &MainWindow::updateShedulerInfos);
+    connect(m_schedulerRoundRobin, &SchedulerRoundRobin::signalShedulingFinished, this, &MainWindow::shedulingFinishedHandler);
+    connect(m_schedulerRoundRobin, &SchedulerRoundRobin::signalMessageStatusBar, this, &MainWindow::printMessageStatusBar);
 
     ui->statusbar->showMessage("Willkommen im Scheduler Simulator!", 3000);
 }
@@ -49,8 +49,8 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete schedulerFirstComeFirstServed;
-    delete schedulerRoundRobin;
+    delete m_schedulerFirstComeFirstServed;
+    delete m_schedulerRoundRobin;
 }
 
 
@@ -354,7 +354,8 @@ void MainWindow::on_pushButtonSimEinstellungen_clicked()
         ProcessTable::instance()->setSimSpeed(prozessParameter.simSpeed());
         ProcessTable::instance()->setDauerProzesswechsel(prozessParameter.dauerProzesswechsel());
 
-        this->schedulerFirstComeFirstServed->setSimSpeed(ProcessTable::instance()->simSpeed());
+        this->m_schedulerFirstComeFirstServed->setSimSpeed(ProcessTable::instance()->simSpeed());
+        this->m_schedulerRoundRobin->setSimSpeed(ProcessTable::instance()->simSpeed());
 
         qDebug() << "Sim Geschwindigkeit:" << ProcessTable::instance()->simSpeed() << "I/O Dauer:" << ProcessTable::instance()->ioDauer() << "Zeit Quantum:" << ProcessTable::instance()->quantum() << "Dauer Prozesswechsel:" << ProcessTable::instance()->dauerProzesswechsel();
 
@@ -392,15 +393,15 @@ void MainWindow::on_pushButtonSimAbbrechen_clicked()
     ui->pushButtonSimPausieren->setEnabled(false);
     ui->pushButtonBeispieleLaden->setEnabled(true);
 
-    schedulerFirstComeFirstServed->pauseTimer();
-    schedulerRoundRobin->pauseTimer();
+    this->m_schedulerFirstComeFirstServed->pauseTimer();
+    this->m_schedulerRoundRobin->pauseTimer();
 
     ProcessTable::instance()->resetSimulation();
 
     ui->progressBar->setValue(0);
 
-    schedulerFirstComeFirstServed->reset();
-    schedulerRoundRobin->reset();
+    this->m_schedulerFirstComeFirstServed->reset();
+    this->m_schedulerRoundRobin->reset();
 
     ui->statusbar->showMessage("Simulation abgebrochen.", 3000);
 }
@@ -432,31 +433,28 @@ void MainWindow::on_pushButtonSimStarten_clicked()
 
     switch(this->m_scheduler){
     case FIRST_COME_FIRST_SERVED:
-        //ProcessTable::instance()->sortProcessListByPID();
-        schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
+        this->m_schedulerFirstComeFirstServed->handleSheduling();
         ui->statusbar->showMessage("Fist Come First Served Scheduling gestartet...", 3000);
         break;
 
     case SHORTEST_JOB_FIRST:
-        //ProcessTable::instance()->sortProcessListByTime();
-        schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
+
+        this->m_schedulerFirstComeFirstServed->handleSheduling();
         ui->statusbar->showMessage("Shortest Job First Scheduling gestartet...", 3000);
         break;
 
     case ROUND_ROBIN_SCHEDULING:
-        schedulerRoundRobin->handleRoundRobinSheduling();
+        this->m_schedulerRoundRobin->handleSheduling();
         ui->statusbar->showMessage("Round Robin Scheduling gestartet...", 3000);
         break;
 
     case PRIORITAETSSCHEDULING:
-        //ProcessTable::instance()->sortProcessListByPrio();
-        schedulerFirstComeFirstServed->handleFirstComeFirstServedSheduling();
+        this->m_schedulerFirstComeFirstServed->handleSheduling();
         ui->statusbar->showMessage("Prioritätsscheduling gestartet...", 3000);
         break;
 
     case ROUND_ROBIN_SCHEDULING_PRIO:
-        //ProcessTable::instance()->sortProcessListByPrio();
-        schedulerRoundRobin->handleRoundRobinSheduling();
+        this->m_schedulerRoundRobin->handleSheduling();
         ui->statusbar->showMessage("Round Robin mit Prio Scheduling gestartet...", 3000);
         break;
 
@@ -476,7 +474,8 @@ void MainWindow::on_pushButtonSimPausieren_clicked()
     ui->pushButtonBeispieleLaden->setEnabled(false);
 
     this->m_elapsedTime += this->m_timer.elapsed();
-    schedulerFirstComeFirstServed->pauseTimer();
+    this->m_schedulerFirstComeFirstServed->pauseTimer();
+    this->m_schedulerRoundRobin->pauseTimer();
 
     ui->statusbar->showMessage("Simulation pausiert", 3000);
 }

@@ -124,8 +124,10 @@ void SchedulerRoundRobin::pauseTimer()
 
 void SchedulerRoundRobin::reset()
 {
-    for(qint64 i=0; i<ProcessTable::instance()->processList().size(); i++){
-        this->m_prozessCounterList.replace(i, 0);
+    if(!ProcessTable::instance()->processList().empty()){
+        for(qint64 i=0; i<ProcessTable::instance()->processList().size(); i++){
+            this->m_prozessCounterList.replace(i, 0);
+        }
     }
 
     this->m_prozessPointer = 0;

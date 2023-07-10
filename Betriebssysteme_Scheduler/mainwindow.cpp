@@ -400,8 +400,30 @@ void MainWindow::on_pushButtonSimAbbrechen_clicked()
 
     ui->progressBar->setValue(0);
 
-    this->m_schedulerFirstComeFirstServed->reset();
-    this->m_schedulerRoundRobin->reset();
+    switch(this->m_scheduler){
+    case FIRST_COME_FIRST_SERVED:
+        this->m_schedulerFirstComeFirstServed->reset();
+        break;
+
+    case SHORTEST_JOB_FIRST:
+        this->m_schedulerFirstComeFirstServed->reset();
+        break;
+
+    case ROUND_ROBIN_SCHEDULING:
+        this->m_schedulerRoundRobin->reset();
+        break;
+
+    case PRIORITAETSSCHEDULING:
+        this->m_schedulerFirstComeFirstServed->reset();
+            break;
+
+    case ROUND_ROBIN_SCHEDULING_PRIO:
+        this->m_schedulerRoundRobin->reset();
+        break;
+
+    default:
+        break;
+    }
 
     ui->statusbar->showMessage("Simulation abgebrochen.", 3000);
 }

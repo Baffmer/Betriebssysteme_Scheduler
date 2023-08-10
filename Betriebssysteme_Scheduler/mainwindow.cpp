@@ -191,7 +191,7 @@ void MainWindow::updateProcessInformationTable()
 
 void MainWindow::on_pushButtonProzessErstellen_clicked()
 {
-    DialogProzessErstellen prozessErstellen(this, ProcessTable::instance()->sizeProcessList());
+    DialogProzessErstellen prozessErstellen(this, ProcessTable::instance()->currentPID() + 1);
     //qint64 PID, qint64 priorisierung, qint64 prozessorRegister, qint64 hauptspeicher, qint64 anzahlEinAusgabe, qint64 anzahlThreads, qint64 dauerThreads
     if(prozessErstellen.exec() == QDialog::Accepted){
         ProcessTable::instance()->addProcess(Process(prozessErstellen.process()));
@@ -321,6 +321,7 @@ void MainWindow::on_pushButtonBeispieleLaden_clicked()
     //ProcessTable::instance()->addProcess(Process(5, 0, 64, 32, 4, 3, 5));
     //ProcessTable::instance()->addProcess(Process(6, 1, 128, 64, 1, 2, 3));
 
+    ProcessTable::instance()->setCurrentPID(4);
     ProcessTable::instance()->updateTimeLines();
 
     ui->statusbar->showMessage("Beispiele geladen.", 3000);

@@ -161,6 +161,16 @@ void ProcessTable::emitProcessTableUpdate()
     emit signalProcessListChanged();
 }
 
+qint64 ProcessTable::currentPID() const
+{
+    return m_currentPID;
+}
+
+void ProcessTable::setCurrentPID(qint64 newCurrentPID)
+{
+    m_currentPID = newCurrentPID;
+}
+
 qint64 ProcessTable::dauerProzesswechsel() const
 {
     return m_dauerProzesswechsel;

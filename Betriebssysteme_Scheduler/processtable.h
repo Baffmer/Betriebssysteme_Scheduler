@@ -225,6 +225,24 @@ public:
      */
     void resetSimulation();
 
+    /**
+     * @brief currentPID
+     * @return m_currentPID
+     *
+     * Getter für m_currentPID
+     *
+     */
+    qint64 currentPID() const;
+
+    /**
+     * @brief setCurrentPID
+     * @param newCurrentPID
+     *
+     * Setter für m_currentPID
+     *
+     */
+    void setCurrentPID(qint64 newCurrentPID);
+
 private:
     /**
      * @brief ProcessTable
@@ -237,6 +255,8 @@ private:
      * Signal zum Refreshen der Prozess Tabelle in der Benutzeroberfläche
      */
     void emitProcessTableUpdate();
+
+    qint64 m_currentPID = 0; ///< die aktuell größte PID
 
     QList<Process> m_processList; ///< QList für die Prozesse
 

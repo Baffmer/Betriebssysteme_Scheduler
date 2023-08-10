@@ -256,6 +256,14 @@ private slots:
      */
     void printMessageStatusBar(QString message, qint64 timeout);
 
+    /**
+     * @brief printEvaluationValues
+     *
+     * Setzt die Evaluationsparameter auf der Benutzeroberfläche
+     *
+     */
+    void printEvaluationValues();
+
 private:
     Ui::MainWindow *ui; ///< Pointer für das User Interface
 
@@ -272,6 +280,6 @@ private:
     QElapsedTimer m_timer; ///< Objekt zum Messen der Simulationsdauer
     qint64 m_elapsedTime = 0; ///< Speichert die Simulationsdauer in ms
 
-    bool m_previousJobFinished = false;
+    bool m_previousJobFinished = false; ///< boolean speichert ob eine Simulation erfolgreich abgeschlossen wurde
 };
 #endif // MAINWINDOW_H

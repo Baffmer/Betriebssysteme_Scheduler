@@ -130,6 +130,8 @@ void MainWindow::updateProcessTable()
     if(selectedRange.size() == 1){
         ui->tableWidgetProzesstabelle->selectRow(selectedRange.at(0).topRow());
     }
+
+    this->printEvaluationValues();
 }
 
 
@@ -436,6 +438,7 @@ void MainWindow::printMessageStatusBar(QString message, qint64 timeout)
 }
 
 
+
 void MainWindow::on_pushButtonSimStarten_clicked()
 {
     qDebug() << "Simulation starten Button geklickt";
@@ -517,9 +520,7 @@ void MainWindow::shedulingFinishedHandler(qint64 sheduler)
 
     this->m_previousJobFinished = true;
 
-    // Evaluation
-    ui->labelSimZeitOut->setText(QString::number((this->m_elapsedTime + this->m_timer.elapsed())/1000.0) + "s");
-    ui->labelProzesswechselOut->setText(QString::number(ProcessTable::instance()->getAnzahlProzesswechsel()));
+    this->printEvaluationValues();
 
     this->m_elapsedTime = 0;
     ui->progressBar->setValue(10000);
@@ -527,6 +528,14 @@ void MainWindow::shedulingFinishedHandler(qint64 sheduler)
 
     // Anzahl Prozesswechsel zurücksetzen
     ProcessTable::instance()->resetAnzahlProzesswechsel();
+}
+
+
+void MainWindow::printEvaluationValues()
+{
+    // Evaluation
+    ui->labelSimZeitOut->setText(QString::number((this->m_elapsedTime + this->m_timer.elapsed())/1000.0) + "s");
+    ui->labelProzesswechselOut->setText(QString::number(ProcessTable::instance()->getAnzahlProzesswechsel()));
 }
 
 

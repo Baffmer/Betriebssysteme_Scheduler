@@ -271,5 +271,7 @@ private:
     // Timer
     QElapsedTimer m_timer; ///< Objekt zum Messen der Simulationsdauer
     qint64 m_elapsedTime = 0; ///< Speichert die Simulationsdauer in ms
+
+    bool m_previousJobFinished = false;
 };
 #endif // MAINWINDOW_H

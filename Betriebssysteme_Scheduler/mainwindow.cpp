@@ -392,6 +392,7 @@ void MainWindow::on_pushButtonSimAbbrechen_clicked()
     ui->pushButtonSimAbbrechen->setEnabled(false);
     ui->pushButtonSimPausieren->setEnabled(false);
     ui->pushButtonBeispieleLaden->setEnabled(true);
+    ui->comboBoxActiveProzess->setEnabled(true);
 
     this->m_schedulerFirstComeFirstServed->pauseTimer();
     this->m_schedulerRoundRobin->pauseTimer();
@@ -442,9 +443,12 @@ void MainWindow::on_pushButtonSimStarten_clicked()
     ui->pushButtonSimAbbrechen->setEnabled(true);
     ui->pushButtonSimPausieren->setEnabled(true);
     ui->pushButtonBeispieleLaden->setEnabled(false);
+    ui->comboBoxActiveProzess->setEnabled(false);
 
-    // Anzahl Prozesswechsel zurücksetzen
-    ProcessTable::instance()->resetAnzahlProzesswechsel();
+    if(this->m_previousJobFinished){
+        ProcessTable::instance()->resetSimulation();
+        this->m_previousJobFinished = false;
+    }
 
     // Timer für die Evaluation Simulationssdauer
     this->m_timer.start();
@@ -509,6 +513,9 @@ void MainWindow::shedulingFinishedHandler(qint64 sheduler)
     ui->pushButtonSimAbbrechen->setEnabled(false);
     ui->pushButtonSimPausieren->setEnabled(false);
     ui->pushButtonBeispieleLaden->setEnabled(true);
+    ui->comboBoxActiveProzess->setEnabled(true);
+
+    this->m_previousJobFinished = true;
 
     // Evaluation
     ui->labelSimZeitOut->setText(QString::number((this->m_elapsedTime + this->m_timer.elapsed())/1000.0) + "s");
@@ -517,6 +524,9 @@ void MainWindow::shedulingFinishedHandler(qint64 sheduler)
     this->m_elapsedTime = 0;
     ui->progressBar->setValue(10000);
     ui->statusbar->showMessage("Simulation beendet", 3000);
+
+    // Anzahl Prozesswechsel zurücksetzen
+    ProcessTable::instance()->resetAnzahlProzesswechsel();
 }
 
 

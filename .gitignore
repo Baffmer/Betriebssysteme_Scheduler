@@ -36,6 +36,7 @@ Makefile*
 html
 latex
 Doxyfile
+uml
 
 # Qt unit tests
 target_wrapper.*

@@ -36,7 +36,7 @@ Makefile*
 html
 latex
 Doxyfile
-uml
+uml.xmi
 
 # Qt unit tests
 target_wrapper.*
